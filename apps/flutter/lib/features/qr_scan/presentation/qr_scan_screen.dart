@@ -45,8 +45,8 @@ class _QrScanScreenState extends State<QrScanScreen> {
         isProcessing = true;
         logger.i('QR detectado (${qrData.length} caracteres)');
         
-        // Navegar a la pantalla de verificación
-        context.pushNamed('qr_verify', extra: qrData).then((_) {
+        // Navegar a la pantalla de resultado con verificación
+        context.pushNamed('qr_result', extra: qrData).then((_) {
           isProcessing = false;
         });
         break;

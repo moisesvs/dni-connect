@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:dni_connect/features/home/presentation/home_screen_new.dart';
 import 'package:dni_connect/features/qr_scan/presentation/qr_scan_screen.dart';
 import 'package:dni_connect/features/qr_scan/presentation/qr_verify_screen.dart';
+import 'package:dni_connect/features/qr_scan/presentation/qr_result_screen.dart';
 import 'package:dni_connect/features/nfc_read/presentation/nfc_input_screen.dart';
 import 'package:dni_connect/features/nfc_read/presentation/nfc_read_screen.dart';
 import 'package:dni_connect/features/result/presentation/result_screen.dart';
@@ -35,6 +36,16 @@ final appRouter = GoRouter(
             final qrData = state.extra as String? ?? '';
             return MaterialPage(
               child: QrVerifyScreen(qrRawData: qrData),
+            );
+          },
+        ),
+        GoRoute(
+          path: '/qr-result',
+          name: 'qr_result',
+          pageBuilder: (context, state) {
+            final qrData = state.extra as String? ?? '';
+            return MaterialPage(
+              child: QrResultScreen(qrData: qrData),
             );
           },
         ),

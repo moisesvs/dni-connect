@@ -12,6 +12,13 @@ Registro de cambios y evolución de la aplicación DNI-Connect. Cada cambio sign
 
 ## [Unreleased]
 
+### 🔄 Commit: eee5f33
+- **Mensaje**: feat: changes in CI
+- **Autor**: e032284
+- **Timestamp**: 2026-02-23 12:03:17
+- 📱 **Flutter**: Cambios en aplicación móvil/webn
+
+
 ### 🔄 Commit: 9d6a883
 - **Mensaje**: Fix: Corregir errores de compilación en QR scanner - reemplazar withOpacity por withValues
 - **Autor**: e032284
