@@ -1,0 +1,175 @@
+{
+  "name": "supabase-integration",
+  "version": "1.0.0",
+  "description": "Integración completa con Supabase para DNI-Connect",
+  "type": "skill",
+  "author": "DNI-Connect Team",
+  "repository": "https://github.com/dni-connect/supabase-integration",
+  
+  "inputs": {
+    "action": {
+      "type": "string",
+      "enum": ["db", "auth", "storage", "realtime", "health"],
+      "required": true,
+      "description": "Acción principal a ejecutar"
+    },
+    "operation": {
+      "type": "string",
+      "enum": [
+        "query", "insert", "update", "delete",
+        "signup", "signin", "signout", "getUser", "resetPassword",
+        "upload", "download", "list", "delete",
+        "subscribe", "unsubscribe"
+      ],
+      "required": true,
+      "description": "Operación específica"
+    },
+    "table": {
+      "type": "string",
+      "required": false,
+      "description": "Nombre de la tabla (requerido para operaciones DB)"
+    },
+    "data": {
+      "type": "object",
+      "required": false,
+      "description": "Datos a insertar o actualizar"
+    },
+    "filters": {
+      "type": "object",
+      "required": false,
+      "description": "Filtros para consultas"
+    },
+    "limit": {
+      "type": "number",
+      "default": 10,
+      "description": "Límite de resultados"
+    },
+    "offset": {
+      "type": "number",
+      "default": 0,
+      "description": "Offset para paginación"
+    },
+    "email": {
+      "type": "string",
+      "required": false,
+      "description": "Email para operaciones de autenticación"
+    },
+    "password": {
+      "type": "string",
+      "required": false,
+      "description": "Contraseña para operaciones de autenticación"
+    },
+    "bucket": {
+      "type": "string",
+      "required": false,
+      "description": "Nombre del bucket de storage"
+    },
+    "path": {
+      "type": "string",
+      "required": false,
+      "description": "Ruta del archivo en storage"
+    },
+    "filePath": {
+      "type": "string",
+      "required": false,
+      "description": "Ruta local del archivo a subir"
+    }
+  },
+
+  "outputs": {
+    "success": {
+      "type": "boolean",
+      "description": "Si la operación fue exitosa"
+    },
+    "data": {
+      "type": "object",
+      "description": "Datos retornados"
+    },
+    "error": {
+      "type": "string",
+      "description": "Mensaje de error si falla"
+    },
+    "count": {
+      "type": "number",
+      "description": "Número de registros afectados"
+    },
+    "duration_ms": {
+      "type": "number",
+      "description": "Tiempo de ejecución en milisegundos"
+    }
+  },
+
+  "timeout": 30000,
+  "retries": 3,
+  "retryDelay": 1000,
+
+  "tags": [
+    "database",
+    "authentication",
+    "storage",
+    "realtime",
+    "supabase",
+    "backend"
+  ],
+
+  "examples": {
+    "query": {
+      "input": {
+        "action": "db",
+        "operation": "query",
+        "table": "users",
+        "limit": 10
+      },
+      "expectedOutput": {
+        "success": true,
+        "data": [
+          {
+            "id": "123e4567-e89b-12d3-a456-426614174000",
+            "email": "user@example.com",
+            "created_at": "2026-02-23T10:30:00Z"
+          }
+        ],
+        "count": 1
+      }
+    },
+    "signup": {
+      "input": {
+        "action": "auth",
+        "operation": "signup",
+        "email": "newuser@example.com",
+        "password": "secure123"
+      },
+      "expectedOutput": {
+        "success": true,
+        "data": {
+          "user": {
+            "id": "user-id",
+            "email": "newuser@example.com"
+          },
+          "session": {
+            "access_token": "eyJhbGc...",
+            "expires_in": 3600
+          }
+        }
+      }
+    }
+  },
+
+  "environment": {
+    "SUPABASE_URL": "https://xxxxx.supabase.co",
+    "SUPABASE_ANON_KEY": "required",
+    "SUPABASE_SERVICE_ROLE_KEY": "required_for_server"
+  },
+
+  "dependencies": {
+    "@supabase/supabase-js": "^2.38.0"
+  },
+
+  "keywords": [
+    "supabase",
+    "database",
+    "backend",
+    "authentication",
+    "api"
+  ]
+}

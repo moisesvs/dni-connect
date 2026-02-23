@@ -15,6 +15,8 @@ import dotenv from 'dotenv';
 import { verificationRouter } from './routes/verification.js';
 import { syncRouter } from './routes/sync.js';
 import { authRouter } from './routes/auth.js';
+import supabaseRouter from './routes/supabase.js';
+import { supabaseMiddleware } from './middleware/supabase.js';
 import { errorHandler } from './middleware/error-handler.js';
 import { requestLogger } from './middleware/request-logger.js';
 import { logger } from './utils/logger.js';
@@ -49,10 +51,14 @@ app.use(express.raw({ type: 'application/octet-stream', limit: '5mb' }));
 // ─── Logging ─────────────────────────────────────────────────────────
 app.use(requestLogger);
 
+// ─── Supabase Middleware ──────────────────────────────────────────────
+app.use(supabaseMiddleware);
+
 // ─── Rutas ───────────────────────────────────────────────────────────
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/verify', verificationRouter);
 app.use('/api/v1/sync', syncRouter);
+app.use('/api/supabase', supabaseRouter);
 
 // Health check
 app.get('/health', (_req, res) => {

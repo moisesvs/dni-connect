@@ -23,7 +23,7 @@ class AppTheme {
   static const Color successLight = Color(0xFFA7F3D0);       // Verde claro
   static const Color dangerColor = Color(0xFFDC2626);        // Rojo error oscuro
   static const Color dangerLight = Color(0xFFFECACA);        // Rojo claro
-  static const Color warningColor = Color(0xFSD97316);       // Naranja advertencia
+  static const Color warningColor = Color(0xFFD97316);       // Naranja advertencia
   static const Color warningLight = Color(0xFFFED7AA);       // Naranja claro
   static const Color infoColor = Color(0xFF0369A1);          // Azul info
 

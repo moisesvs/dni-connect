@@ -214,7 +214,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
-                      Icons.shield_verified_outlined,
+                      Icons.verified_user,
                       color: primaryColor,
                       size: 24,
                     ),
@@ -426,7 +426,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
               isDarkMode: isDarkMode,
             ),
             _buildSettingItem(
-              icon: Icons.notifications_outlined_rounded,
+              icon: Icons.notifications_outlined,
               title: 'Notificaciones',
               subtitle: 'Configura tus preferencias',
               onTap: () {},

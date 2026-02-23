@@ -1,0 +1,18 @@
+{
+  "input": {
+    "action": "storage",
+    "operation": "upload",
+    "bucket": "avatars",
+    "path": "user-123/profile.jpg",
+    "filePath": "/path/to/local/profile.jpg"
+  },
+  "expectedOutput": {
+    "success": true,
+    "data": {
+      "id": "12345678-1234-1234-1234-123456789012",
+      "path": "user-123/profile.jpg",
+      "fullPath": "avatars/user-123/profile.jpg"
+    },
+    "duration_ms": 512
+  }
+}

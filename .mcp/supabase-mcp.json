@@ -1,0 +1,57 @@
+{
+  "name": "supabase-mcp",
+  "version": "1.0.0",
+  "description": "Model Context Protocol for Supabase integration",
+  "type": "mcp",
+  "capabilities": {
+    "database": {
+      "query": true,
+      "insert": true,
+      "update": true,
+      "delete": true
+    },
+    "auth": {
+      "signUp": true,
+      "signIn": true,
+      "signOut": true,
+      "resetPassword": true,
+      "updateProfile": true
+    },
+    "storage": {
+      "upload": true,
+      "download": true,
+      "delete": true,
+      "list": true
+    },
+    "realtimeSubscriptions": true,
+    "vectorSearch": true,
+    "edgeFunctions": true
+  },
+  "inputs": {
+    "supabaseUrl": {
+      "type": "string",
+      "required": true,
+      "description": "URL de tu proyecto Supabase (ej: https://xxxxx.supabase.co)"
+    },
+    "supabaseKey": {
+      "type": "string",
+      "required": true,
+      "description": "Clave API de Supabase (anon key o service_role key)"
+    },
+    "operation": {
+      "type": "string",
+      "enum": ["query", "insert", "update", "delete", "auth", "storage", "realtime"],
+      "description": "Tipo de operación a ejecutar"
+    }
+  },
+  "outputs": {
+    "success": { "type": "boolean" },
+    "data": { "type": "object" },
+    "error": { "type": "string" }
+  },
+  "configuration": {
+    "timeout": 30000,
+    "retries": 3,
+    "cacheResults": true
+  }
+}

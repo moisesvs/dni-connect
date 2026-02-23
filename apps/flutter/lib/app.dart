@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:dni_connect/core/theme/app_theme.dart';
+import 'package:dni_connect/core/theme/app_theme_simple.dart';
 import 'package:dni_connect/core/router/app_router.dart';
 
 class DniConnectApp extends StatelessWidget {
@@ -10,8 +10,8 @@ class DniConnectApp extends StatelessWidget {
     return MaterialApp.router(
       title: 'DNI-Connect',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
+      theme: AppThemes.lightTheme(),
+      darkTheme: AppThemes.darkTheme(),
       themeMode: ThemeMode.system,
       routerConfig: appRouter,
     );
