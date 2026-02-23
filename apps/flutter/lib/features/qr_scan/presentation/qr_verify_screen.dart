@@ -52,7 +52,7 @@ class _QrVerifyScreenState extends State<QrVerifyScreen> {
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.cyan.withOpacity(0.15),
+                  color: Colors.cyan.withValues(alpha: 0.15),
                   border: Border.all(
                     color: Colors.cyan,
                     width: 2,
@@ -94,7 +94,7 @@ class _QrVerifyScreenState extends State<QrVerifyScreen> {
                 color: Colors.grey[900],
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: Colors.cyan.withOpacity(0.3),
+                  color: Colors.cyan.withValues(alpha: 0.3),
                   width: 1.5,
                 ),
               ),
@@ -113,7 +113,7 @@ class _QrVerifyScreenState extends State<QrVerifyScreen> {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.5),
+                      color: Colors.black.withValues(alpha: 0.5),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
                         color: Colors.grey[700]!,
@@ -162,10 +162,10 @@ class _QrVerifyScreenState extends State<QrVerifyScreen> {
             // Notas de seguridad
             Container(
               decoration: BoxDecoration(
-                color: Colors.orange.withOpacity(0.1),
+                color: Colors.orange.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: Colors.orange.withOpacity(0.3),
+                  color: Colors.orange.withValues(alpha: 0.3),
                   width: 1.5,
                 ),
               ),

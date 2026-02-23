@@ -107,7 +107,7 @@ class _QrScanScreenState extends State<QrScanScreen> {
                         Icon(
                           Icons.qr_code_2,
                           size: 64,
-                          color: Colors.white.withOpacity(0.7),
+                          color: Colors.white.withValues(alpha: 0.7),
                         ),
                         const SizedBox(height: 16),
                         Text(
@@ -124,7 +124,7 @@ class _QrScanScreenState extends State<QrScanScreen> {
                         Text(
                           'Asegúrate de que esté bien iluminado',
                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: Colors.white.withOpacity(0.8),
+                                color: Colors.white.withValues(alpha: 0.8),
                               ),
                         ),
                       ],
@@ -160,7 +160,7 @@ class _QrScanScreenState extends State<QrScanScreen> {
                 Expanded(
                   flex: 2,
                   child: Container(
-                    color: Colors.black.withOpacity(0.4),
+                    color: Colors.black.withValues(alpha: 0.4),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -172,22 +172,8 @@ class _QrScanScreenState extends State<QrScanScreen> {
                             FloatingActionButton.extended(
                               onPressed: _toggleFlash,
                               label: const Text('Flash'),
-                              icon: ValueListenableBuilder(
-                                valueListenable: controller.torchState,
-                                builder: (context, state, _) {
-                                  switch (state) {
-                                    case TorchState.off:
-                                      return const Icon(Icons.flash_off);
-                                    case TorchState.on:
-                                      return const Icon(Icons.flash_on);
-                                    case TorchState.unavailable:
-                                      return const Icon(Icons.flash_off);
-                                    case TorchState.auto:
-                                      return const Icon(Icons.flash_auto);
-                                  }
-                                },
-                              ),
-                              backgroundColor: Colors.cyan.withOpacity(0.8),
+                              icon: const Icon(Icons.flash_on),
+                              backgroundColor: Colors.cyan.withValues(alpha: 0.8),
                               foregroundColor: Colors.white,
                             ),
 
@@ -196,7 +182,7 @@ class _QrScanScreenState extends State<QrScanScreen> {
                               onPressed: _switchCamera,
                               label: const Text('Cambiar'),
                               icon: const Icon(Icons.flip_camera_android),
-                              backgroundColor: Colors.purple.withOpacity(0.8),
+                              backgroundColor: Colors.purple.withValues(alpha: 0.8),
                               foregroundColor: Colors.white,
                             ),
                           ],
@@ -211,7 +197,7 @@ class _QrScanScreenState extends State<QrScanScreen> {
                             'El QR se detectará automáticamente',
                             textAlign: TextAlign.center,
                             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  color: Colors.white.withOpacity(0.7),
+                                  color: Colors.white.withValues(alpha: 0.7),
                                 ),
                           ),
                         ),
