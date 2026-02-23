@@ -3,12 +3,32 @@ import 'package:google_fonts/google_fonts.dart';
 
 /// Tema simplificado y funcional para DNI-Connect
 class AppThemes {
-  // Colores
+  // Colores Primarios
   static const primaryColor = Color(0xFF1E40AF);
+  static const primaryLight = Color(0xFF3B82F6);
+  static const primaryVeryLight = Color(0xFFDBEAFE);
+
+  // Colores Secundarios
   static const secondaryColor = Color(0xFF7C3AED);
+  static const secondaryLight = Color(0xFFC4B5FD);
+
+  // Estados
   static const successColor = Color(0xFF059669);
+  static const successLight = Color(0xFFA7F3D0);
   static const dangerColor = Color(0xFFDC2626);
+  static const dangerLight = Color(0xFFFECACA);
   static const warningColor = Color(0xFFD97316);
+  static const warningLight = Color(0xFFFED7AA);
+
+  // Texto
+  static const textLight = Color(0xFF111827);
+  static const textLightSecondary = Color(0xFF6B7280);
+  static const textDark = Color(0xFFFAFAFA);
+  static const textDarkSecondary = Color(0xFFC1D5E3);
+
+  // Bordes
+  static const lightBorder = Color(0xFFE5E7EB);
+  static const darkBorder = Color(0xFF2D3748);
 
   /// Obtener tema claro
   static ThemeData lightTheme() {
