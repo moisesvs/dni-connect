@@ -12,17 +12,96 @@ Registro de cambios y evolución de la aplicación DNI-Connect. Cada cambio sign
 
 ## [Unreleased]
 
+### 🎨 Mejorado
+
+#### Dark Mode Enhancements v2.0 (23 Feb 2026)
+- 🌙 **Diseño Dark Mode Sofisticado** en `design_showcase_screen.dart`:
+  - AppBar con gradiente dinámico (darkSurface → azul oscuro)
+  - BottomNavigationBar con AnimationController e íconos animados
+  - Border sutil con primaryColor (0.25 opacity)
+  - BoxShadow personalizada para profundidad (#000, 0.3 opacity, blur 10)
+  
+- 🎨 **Paleta de Colores Rediseñada**:
+  - Cards individuales para cada color con glow shadows
+  - Hex code display (#XXXXXX) para desarrolladores
+  - Check circle indicators con background color-washed
+  - Secciones con emojis para rápido escaneo (🔵 🎨 💜 📊)
+  
+- 📦 **Secciones Mejoradas con Gradientes**:
+  - 🔘 Botones & Controles: Gradiente primaryColor
+  - 💳 Cards y Contenedores: Gradiente secondaryColor
+  - 📋 Items de Lista: Gradiente successColor
+  - 🎨 Estados de Mensajes: Gradiente infoColor (success, warning, error, info)
+  - ⏳ Estados de Carga: Gradiente secondaryColor con border y shadow
+  - 📭 Estado Vacío: Gradiente warningColor
+
+- ✨ **Efectos Visuales**:
+  - Gradientes LinearGradient con 2 colores coordinados
+  - Glow shadows (opacity 0.1-0.4, blur radius 10-12)
+  - Bordes dinámicos con colores de marca
+  - Spacing mejorado con jerarquía clara (24, 20, 12 px)
+  - Tipografía Poppins con letter-spacing 0.5
+
+- 📊 **Validación WCAG AA+**:
+  - Contraste título: 21:1 (FFFFFF sobre #0F172A)
+  - Contraste texto: 11:1 (E2E8F0 sobre #1E293B)
+  - Contraste secundario: 7:1
+  - Todas las secciones accesibles
+
+- 📝 **Documentación Creada**:
+  - `DARK_MODE_ENHANCEMENTS.md`: Guía completa de cambios (300+ líneas)
+  - Detalles de cada sección, colores, efectos
+  - Paleta de colores con opacidades
+  - Instrucciones de prueba
+
 ### 📝 Agregado
 
+#### Sistema de Skills Documentado (23 Feb 2026)
+- ✨ **17 Skills Completamente Documentados** con estructura normalizada:
+  - **Core Infrastructure**: `flutter-build`, `backend-start`, `monorepo-setup`, `dev-watch`
+  - **Verification & Crypto**: `qr-verification`, `nfc-reading`, `crypto-validation`, `pki-integration`
+  - **Data & Sync**: `database-sync`, `storage-upload`, `cache-clean`
+  - **Design & Accessibility**: `ui-design`
+  - **Testing & Quality**: `backend-test`, `flutter-test`, `lint-check`, `coverage`
+  - **Deployment**: `deploy-backend`, `deploy-flutter`
+  - **Monitoring**: `health-check`
+  
+- 📚 **Documentación Integral**:
+  - Cada skill con `SKILL.md` (500-600 palabras)
+  - Archivos `config.json` con schema normalizado (inputs/outputs/timeout)
+  - 10+ archivos de ejemplo JSON para casos de uso
+  - `.agents/skills/README.md` con índice y referencia rápida
+  - `.agents/skills/INVENTORY.md` con estadísticas detalladas y roadmap
+
+- 🔄 **Sistema de Monitoreo**:
+  - Script `status.sh` para reportar estado de skills
+  - Validación de estructura en CI/CD
+  - Capacidad de ejecutar skills desde terminal, código TypeScript, y GitHub Actions
+
+- 📖 **Documentación Completada**:
+  - README.md: Guía completa del proyecto (400+ líneas)
+  - AGENTS.md: Documentación sistema de agentes y skills (500+ líneas)
+
+### 📝 Anteriores
+
+- ✨ **UI Design Skill**: Validación de Material 3, contraste WCAG, responsividad
+  - Soporte para validación de Material 3 compliance
+  - Generación automática de temas desde color seed
+  - Verificación de contraste WCAG (A/AA/AAA)
+  - Testing de responsividad en múltiples breakpoints
+  - Auditoría de componentes Flutter
+  - Generación automática de documentación de UI
 - ✨ VDS Parser en Dart para parsing offline de QRs MiDNI
 - 🤖 Sistema de Skills/Agents para ejecutar tareas especializadas
-- 📚 Documentación AGENTS.md con 6 skills principales
+- 📚 Documentación AGENTS.md con 7 skills principales
 - 📊 Estructura `.agents/skills/` con configs y documentación
-- 🎯 Skills: flutter-build, backend-start, qr-verification, nfc-reading, database-sync, crypto-validation
+- 🎯 Skills: flutter-build, backend-start, qr-verification, nfc-reading, database-sync, crypto-validation, **ui-design**
 
 ### 🔧 Modificado
 
-- N/A
+- ✏️ AGENTS.md: Agregada sección Design & Accessibility
+- ✏️ .agents/INDEX.md: Actualizado con nuevo skill ui-design
+- ✏️ .agents/skills/README.md: Agregada categoría Design & Accessibility
 
 ### 🗑️ Eliminado
 

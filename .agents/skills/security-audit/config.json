@@ -1,0 +1,59 @@
+{
+  "id": "security-audit",
+  "name": "Security Audit",
+  "version": "1.0.0",
+  "description": "Auditoría completa de seguridad: OWASP Top 10, dependencias vulnerables, secretos expuestos",
+  "category": "security",
+  "inputs": {
+    "action": {
+      "type": "string",
+      "enum": ["audit", "owasp", "dependencies", "secrets", "headers", "encryption", "compliance"],
+      "required": true,
+      "description": "Tipo de auditoría a ejecutar"
+    },
+    "scope": {
+      "type": "string",
+      "enum": ["frontend", "backend", "all"],
+      "default": "all",
+      "description": "Alcance de la auditoría"
+    },
+    "targetPath": {
+      "type": "string",
+      "default": ".",
+      "description": "Ruta base para análisis"
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["critical", "high", "medium", "low", "all"],
+      "default": "all",
+      "description": "Filtro de severidad"
+    },
+    "fix": {
+      "type": "boolean",
+      "default": false,
+      "description": "Intentar auto-fix de problemas"
+    },
+    "generateReport": {
+      "type": "boolean",
+      "default": true,
+      "description": "Generar reporte HTML y JSON"
+    }
+  },
+  "outputs": {
+    "success": "boolean",
+    "action": "string",
+    "summary": "object",
+    "findings": "object[]",
+    "owasp": "object",
+    "dependencies": "object",
+    "secrets": "object",
+    "encryption": "object",
+    "dataProtection": "object",
+    "recommendations": "string[]",
+    "reportFiles": "string[]",
+    "duration": "number"
+  },
+  "timeout": 120000,
+  "retryable": false,
+  "tags": ["security", "owasp", "audit", "vulnerabilities", "compliance", "gdpr"]
+}

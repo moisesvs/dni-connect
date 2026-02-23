@@ -7,15 +7,45 @@ Documentación completa sobre agentes y skills disponibles para automatizar tare
 ## 📚 Contenido
 
 - [Visión General](#visión-general)
+- [Sistema de Sincronización Automática](#-sistema-de-sincronización-automática)
 - [Skills Disponibles](#skills-disponibles)
 - [Estructura de Skills](#estructura-de-skills)
 - [Uso de Skills](#uso-de-skills)
 - [Workflow de CI/CD](#workflow-de-cicd)
 - [Desarrollo de Skills](#desarrollo-de-skills)
+- [Documentación Asociada](#-documentación-asociada)
 
 ---
 
 ## 🎯 Visión General
+
+### Arquitectura del Proyecto
+
+**DNI-Connect** es una solución multiplataforma con estructura simplificada:
+
+```
+dni-connect/
+├── apps/
+│   └── flutter/          # Aplicación Flutter (Web, Android, iOS)
+│       ├── lib/          # Código Dart compartido
+│       ├── web/          # Configuración web
+│       ├── android/      # Configuración Android
+│       └── ios/          # Configuración iOS
+├── backend/              # API REST Node.js + TypeScript
+│   ├── src/
+│   ├── package.json
+│   └── tsconfig.json
+├── packages/
+│   └── core/             # Librerías compartidas (crypto, verificación)
+└── .agents/
+    └── skills/           # Skills de automatización
+```
+
+**Componentes:**
+- **Web**: Flutter Web (apps/flutter)
+- **Mobile**: Flutter iOS/Android (apps/flutter)
+- **Backend**: Node.js + TypeScript (backend/)
+- **Core**: Librerías criptográficas (packages/core/)
 
 ### ¿Qué son los Skills?
 
@@ -52,7 +82,138 @@ Los **skills** son tareas automatizadas que ejecutan funcionalidades específica
 
 ---
 
-## 📚 Skills Disponibles
+## � Sistema de Sincronización Automática
+
+### Overview
+
+El sistema de sincronización automática mantiene **CHANGE_LOG.md** actualizado con cada commit, garantizando que la documentación siempre refleje el estado actual del código.
+
+### Componentes Principales
+
+#### 1. Post-Commit Hook (`.git/hooks/post-commit`)
+
+**Ejecutión:** Automática después de cada `git commit`
+
+**Funcionalidad:**
+```bash
+# Analiza cambios en el código
+# Categoriza por tipo: Flutter, Backend, Docs, Skills, Config
+# Genera entrada automática en CHANGE_LOG.md
+# Registra: commit hash, mensaje, autor, timestamp, categoría
+```
+
+**Categorías Detectadas:**
+```
+📱 Flutter    - apps/flutter/*
+🔧 Backend    - apps/web/backend/*, backend/*
+📚 Docs       - docs/*, README.md, AGENTS.md
+🤖 Skills     - .agents/skills/*
+⚙️ Config     - package.json, tsconfig.json, pubspec.yaml
+```
+
+**Ejemplo de Salida:**
+```markdown
+### 🔄 Commit: a1b2c3d
+- **Mensaje**: Agregar flutter-build skill documentation
+- **Autor**: Juan Pérez
+- **Timestamp**: 2026-02-23 14:30:45
+- 🤖 **Skills**: Actualización en sistema de automatización
+```
+
+**Permisos:**
+```bash
+chmod +x .git/hooks/post-commit  # Hacer ejecutable
+```
+
+#### 2. Script de Sincronización Manual (`sync-docs.sh`)
+
+**Ejecución:** Manual desde terminal
+
+```bash
+./sync-docs.sh
+```
+
+**Validaciones Realizadas:**
+- ✅ CHANGE_LOG.md actualizado
+- ✅ 18 skills completamente documentados
+- ✅ Archivos principales existen (README.md, AGENTS.md, CHANGE_LOG.md)
+- ✅ Índice de skills actualizado
+- ✅ Workflows YAML válido
+- ✅ Estructura monorepo correcta
+
+**Output:**
+```
+ℹ️ Paso 1: Sincronizando CHANGE_LOG.md...
+✅ Paso 2: Verificando estado de Skills...
+✅ Se encontraron 18 skills documentados
+✅ Todos los 18 skills están completamente documentados
+...
+✅ Sincronización completada
+```
+
+### Flujo de Sincronización
+
+```
+Cambios en código (Flutter, Backend, Docs, Skills, Config)
+            │
+            ▼
+    git commit "mensaje"
+            │
+            ▼
+.git/hooks/post-commit (automático)
+            │
+    ┌───────┼───────┐
+    ▼       ▼       ▼
+ Analiza Categoriza Genera
+ cambios  cambios   entrada
+            │
+            ▼
+    CHANGE_LOG.md actualizado
+            │
+            ▼
+    ✅ Commit completado con docs sincronizadas
+```
+
+### Para Agentes: Cómo Usar la Sincronización
+
+**Dentro de un Skill o Workflow:**
+
+```bash
+# Los agentes pueden confiar en que CHANGE_LOG.md siempre está actualizado
+# después de cada commit
+
+# Verificar sincronización
+./sync-docs.sh
+
+# Ver cambios recientes
+grep "### 🔄 Commit:" CHANGE_LOG.md | head -10
+
+# Obtener último commit registrado
+tail -20 CHANGE_LOG.md
+```
+
+**En TypeScript/Node.js:**
+
+```typescript
+import fs from 'fs';
+
+// Leer CHANGE_LOG para verificar cambios recientes
+const changelog = fs.readFileSync('CHANGE_LOG.md', 'utf-8');
+const hasRecentSkillsChanges = changelog.includes('🤖 **Skills**');
+
+if (hasRecentSkillsChanges) {
+  console.log('Cambios recientes en skills detectados');
+  // Ejecutar acciones correspondientes
+}
+```
+
+### Referencias Técnicas
+
+- **Documentación Completa:** [.agents/SYNC.md](./.agents/SYNC.md)
+- **Guía Rápida:** [QUICK_START.md](./QUICK_START.md#-sistema-de-sincronización)
+- **Solución de Problemas:** [.agents/SYNC.md - Solución de Problemas](./.agents/SYNC.md#-solución-de-problemas)
+
+---
 
 ### 🏗️ Core Infrastructure
 
@@ -112,6 +273,65 @@ Los **skills** son tareas automatizadas que ejecutan funcionalidades específica
 ./run-skill.sh storage-upload --photo-path "./photo.jpg" --user-id "user@example.com"
 ./run-skill.sh cache-clean --retention-days 30
 ```
+
+---
+
+### 🎨 Design & Accessibility
+
+**Validación de diseño, accesibilidad y Material 3.**
+
+| Skill | Estado | Descripción |
+|-------|--------|-------------|
+| **ui-design** | ✅ | Validar Material 3, contraste WCAG, responsividad |
+
+**Usar:**
+```bash
+./run-skill.sh ui-design --action validate --targetFile lib/core/theme/app_theme.dart
+./run-skill.sh ui-design --action generate-theme --colorSeed "#003366"
+./run-skill.sh ui-design --action contrast-check --wcagLevel AA
+./run-skill.sh ui-design --action responsivity-test --breakpoints mobile,tablet,desktop
+./run-skill.sh ui-design --action audit --generateDocs true
+```
+
+---
+
+### 🔒 Security & Compliance
+
+**Auditoría de seguridad, validación OWASP y cumplimiento legal.**
+
+| Skill | Estado | Descripción |
+|-------|--------|-------------|
+| **security-audit** | ✅ | Auditoría completa de seguridad OWASP Top 10 |
+
+**Acciones disponibles:**
+- `audit` - Auditoría completa de seguridad
+- `owasp` - Validación OWASP Top 10 (2023)
+- `dependencies` - Scan de dependencias vulnerables
+- `secrets` - Detección de secretos expuestos
+- `headers` - Auditoría de headers de seguridad HTTP
+- `encryption` - Verificación de cifrado en tránsito/reposo
+- `compliance` - Auditoría GDPR/CCPA
+
+**Usar:**
+```bash
+./run-skill.sh security-audit --action audit
+./run-skill.sh security-audit --action owasp --generateReport true
+./run-skill.sh security-audit --action dependencies --checkVulnerabilities true
+./run-skill.sh security-audit --action secrets --scanPath backend/
+./run-skill.sh security-audit --action headers --apiUrl https://api.example.com
+./run-skill.sh security-audit --action encryption --validateCerts true
+./run-skill.sh security-audit --action compliance --standards GDPR,CCPA
+```
+
+**Características:**
+- ✅ Validación OWASP Top 10
+- ✅ Escaneo de dependencias vulnerables (CVE database)
+- ✅ Detección de secretos (API keys, tokens, credentials)
+- ✅ Auditoría de headers HTTP
+- ✅ Verificación de certificados PKI
+- ✅ Validación de encriptación
+- ✅ Cumplimiento GDPR/CCPA
+- ✅ Generación de reportes HTML/JSON
 
 ---
 
@@ -418,11 +638,120 @@ AGENTS_PARALLEL_LIMIT=4        # Skills en paralelo
 
 ---
 
-## 🔗 Referencias
+## � Documentación Asociada
+
+### Documentos Principales
+
+| Documento | Propósito | Audiencia |
+|-----------|-----------|-----------|
+| **[START_HERE.md](./START_HERE.md)** | Punto de entrada al proyecto | Todos |
+| **[QUICK_START.md](./QUICK_START.md)** | Guía rápida en 3 pasos | Nuevos desarrolladores |
+| **[README.md](./README.md)** | Instalación, arquitectura, features | Todos |
+| **[CHANGE_LOG.md](./CHANGE_LOG.md)** | Historial automático de cambios | Mantenedores, Seguimiento |
+| **[.agents/SYNC.md](./.agents/SYNC.md)** | Sistema de sincronización automática | Técnicos, Agentes |
+| **[.agents/skills/README.md](./.agents/skills/README.md)** | Índice de 18 skills con ejemplos | Implementadores |
+| **[.agents/skills/INVENTORY.md](./.agents/skills/INVENTORY.md)** | Inventario detallado de skills | Analistas |
+| **[docs/DOCUMENTATION_MAP.md](./docs/DOCUMENTATION_MAP.md)** | Mapa visual de toda la documentación | Navegadores |
+| **[IMPLEMENTATION_SUMMARY.md](./IMPLEMENTATION_SUMMARY.md)** | Resumen de lo implementado | Mantenedores |
+
+### Para Agentes: Acceso a Documentación
+
+**Desde Bash/Shell:**
+```bash
+# Ver índice de skills
+cat .agents/skills/README.md
+
+# Ver inventario completo
+cat .agents/skills/INVENTORY.md
+
+# Ver configuración de un skill específico
+cat .agents/skills/[nombre]/config.json
+
+# Ver documentación de un skill
+cat .agents/skills/[nombre]/SKILL.md
+
+# Ver cambios recientes
+head -50 CHANGE_LOG.md
+```
+
+**Desde Node.js/TypeScript:**
+```typescript
+import fs from 'fs';
+import path from 'path';
+
+// Obtener lista de skills
+const skillsDir = './.agents/skills';
+const skills = fs.readdirSync(skillsDir)
+  .filter(f => fs.statSync(path.join(skillsDir, f)).isDirectory());
+
+// Cargar configuración de un skill
+const skillConfig = JSON.parse(
+  fs.readFileSync(`./.agents/skills/${skillName}/config.json`, 'utf-8')
+);
+
+// Leer CHANGE_LOG
+const changelog = fs.readFileSync('./CHANGE_LOG.md', 'utf-8');
+```
+
+**Desde Agentes/Workflows:**
+```yaml
+# Ejemplo: GitHub Actions leyendo documentación
+- name: Get skills list
+  run: |
+    ls -la .agents/skills/ > /tmp/skills.txt
+    cat /tmp/skills.txt
+
+- name: Validate skill documentation
+  run: |
+    for skill in .agents/skills/*/; do
+      if [ ! -f "$skill/SKILL.md" ] || [ ! -f "$skill/config.json" ]; then
+        echo "❌ Skill incompleto: $(basename $skill)"
+        exit 1
+      fi
+    done
+```
+
+### Estructura de Documentación para Agentes
+
+```
+.agents/
+├── SYNC.md ..................... Sistema de sincronización
+├── skills/
+│   ├── README.md ............... Índice de skills (usa esto como catálogo)
+│   ├── INVENTORY.md ............ Estadísticas completas
+│   ├── status.sh ............... Script de estado
+│   └── [skill-name]/
+│       ├── SKILL.md ............ Documentación completa (lee esto)
+│       ├── config.json ......... Esquema de inputs/outputs (usa esto)
+│       └── examples/
+│           ├── example-success.json
+│           ├── example-error.json
+│           └── example-batch.json
+```
+
+### Cómo los Agentes Usan Esta Información
+
+1. **Descubrimiento de Skills**: Leer `.agents/skills/README.md`
+2. **Configuración**: Consultar `.agents/skills/[nombre]/config.json`
+3. **Documentación**: Revisar `.agents/skills/[nombre]/SKILL.md`
+4. **Ejemplos**: Ver `.agents/skills/[nombre]/examples/`
+5. **Histórico**: Consultar `CHANGE_LOG.md`
+6. **Sincronización**: Ejecutar `./sync-docs.sh` antes de acciones críticas
+
+---
+
+## �🔗 Referencias
 
 - **[README.md](./README.md)** - Guía general del proyecto
-- **[ARCHITECTURE.md](./docs/ARCHITECTURE.md)** - Arquitectura técnica
-- **[CHANGE_LOG.md](./CHANGE_LOG.md)** - Historial de cambios
+- **[QUICK_START.md](./QUICK_START.md)** - Guía rápida para empezar
+- **[START_HERE.md](./START_HERE.md)** - Punto de entrada para nuevos
+- **[CHANGE_LOG.md](./CHANGE_LOG.md)** - Historial automático de cambios
+- **[.agents/SYNC.md](./.agents/SYNC.md)** - Sistema de sincronización automática
+- **[.agents/skills/README.md](./.agents/skills/README.md)** - Índice de 18 skills
+- **[.agents/skills/INVENTORY.md](./.agents/skills/INVENTORY.md)** - Inventario detallado
+- **[docs/DOCUMENTATION_MAP.md](./docs/DOCUMENTATION_MAP.md)** - Mapa de documentación
+- **[docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)** - Arquitectura técnica
+- **[IMPLEMENTATION_SUMMARY.md](./IMPLEMENTATION_SUMMARY.md)** - Resumen de implementación
 - **GitHub Actions:** [.github/workflows/](../.github/workflows/)
 
 ---
@@ -462,6 +791,7 @@ tail -f .agents/logs/skill-[nombre].log
 
 ---
 
-**Última actualización:** Febrero 2026  
+**Última actualización:** 23 de Febrero, 2026  
 **Versión de Skills:** 1.0.0  
-**Mantenedor:** DNI-Connect Team
+**Sistema de Sincronización:** Activo ✅  
+**Mantenedor:** DNI-Connect Automation Team

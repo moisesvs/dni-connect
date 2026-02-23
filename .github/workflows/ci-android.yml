@@ -7,23 +7,25 @@ on:
       - 'apps/flutter/**'
       - 'packages/core/**'
       - '.github/workflows/ci-android.yml'
+      - 'package.json'
+      - 'package-lock.json'
   pull_request:
     branches: [ main, develop ]
     paths:
       - 'apps/flutter/**'
       - 'packages/core/**'
+      - 'package.json'
+      - 'package-lock.json'
 
 env:
   FLUTTER_VERSION: '3.24.0'
   JDK_VERSION: '17'
+  NODE_VERSION: '18'
 
 jobs:
   # Core Package Testing
   core-package:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: packages/core
 
     steps:
       - uses: actions/checkout@v4
@@ -31,26 +33,22 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-          cache-dependency-path: 'packages/core/package-lock.json'
 
-      - name: Install dependencies
+      - name: Install root dependencies
         run: npm ci
 
-      - name: Build
-        run: npm run build
+      - name: Build core
+        run: npm run build:core
 
       - name: Run tests
-        run: npm test --if-present
+        run: npm test --workspace=packages/core --if-present
         continue-on-error: true
 
   # Flutter Android Build
   flutter-android:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: apps/flutter
 
     steps:
       - uses: actions/checkout@v4
@@ -68,23 +66,28 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
 
-      - name: Get dependencies
+      - name: Get Flutter dependencies
+        working-directory: apps/flutter
         run: flutter pub get
 
-      - name: Analyze code
+      - name: Analyze Flutter code
+        working-directory: apps/flutter
         run: flutter analyze
         continue-on-error: true
 
-      - name: Format check
+      - name: Check Flutter format
+        working-directory: apps/flutter
         run: flutter format --set-exit-if-changed .
         continue-on-error: true
 
-      - name: Build APK
+      - name: Build Flutter APK
+        working-directory: apps/flutter
         run: flutter build apk --release
         env:
           JAVA_TOOL_OPTIONS: -Xmx4096m
 
-      - name: Build App Bundle (AAB)
+      - name: Build Flutter App Bundle (AAB)
+        working-directory: apps/flutter
         run: flutter build appbundle --release
         env:
           JAVA_TOOL_OPTIONS: -Xmx4096m

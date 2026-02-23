@@ -5,20 +5,20 @@
   "description": "Solución multiplataforma para verificación de identidad mediante DNIe (NFC) y QR MiDNI",
   "workspaces": [
     "packages/*",
-    "apps/web/frontend",
-    "apps/web/backend"
+    "backend"
   ],
   "scripts": {
-    "dev:web": "npm run dev:backend",
-    "dev:frontend": "echo 'No frontend web configurado'",
-    "dev:backend": "npm run dev --workspace=apps/web/backend",
+    "dev": "concurrently \"npm run dev:flutter\" \"npm run dev:backend\"",
+    "dev:flutter": "cd apps/flutter && flutter run -d chrome",
+    "dev:web": "npm run dev",
+    "dev:backend": "npm run dev --workspace=backend",
     "dev:watch": "./watch.sh all web",
     "dev:flutter:watch": "./watch.sh flutter web",
     "dev:backend:watch": "./watch.sh backend",
     "build:core": "npm run build --workspace=packages/core",
-    "build:frontend": "npm run build --workspace=apps/web/frontend",
-    "build:backend": "npm run build --workspace=apps/web/backend",
-    "build:all": "npm run build:core && npm run build:backend",
+    "build:flutter": "cd apps/flutter && flutter build web",
+    "build:backend": "npm run build --workspace=backend",
+    "build:all": "npm run build:core && npm run build:backend && npm run build:flutter",
     "test": "npm run test --workspaces --if-present",
     "lint": "npm run lint --workspaces --if-present"
   },

@@ -72,15 +72,35 @@ Documentación actualizada para incluir el nuevo skill.
 - Agregado `dev-watch` en Core Infrastructure
 - Ejemplos de uso del nuevo skill
 
-## 🚀 Cómo Usar
+## Cambios Realizados
 
-### Opción 1: Todo en Uno (Recomendado)
+### 1. **Estructura Aclarada** 
+La web es Flutter Web (no un frontend web separado).
 
-```bash
-npm run dev:watch
-```
+**Ubicación:** `apps/flutter/`
 
-Inicia ambas aplicaciones con hot reload automático.
+**Archivos actualizados:**
+- `package.json` - Workspace actualizado, frontend web removido
+- `AGENTS.md` - Arquitectura del proyecto aclarada
+
+### 2. **Scripts npm Actualizados**
+
+Nuevos scripts disponibles:
+
+| Script | Descripción |
+|--------|------------|
+| `npm run dev` | Iniciar Flutter Web + Backend juntos |
+| `npm run dev:flutter` | Solo Flutter Web |
+| `npm run dev:backend` | Solo Backend Node.js |
+| `npm run dev:watch` | Watch mode con hot reload automático |
+| `npm run build:all` | Compilar core + backend + Flutter web |
+
+### 3. **Watch Script Actualizado**
+
+`watch.sh` ahora:
+- Inicia Flutter Web en Chrome automáticamente
+- Monitorea cambios y ejecuta hot reload
+- Sincroniza con backend en paralelo
 
 ### Opción 2: Solo Flutter
 

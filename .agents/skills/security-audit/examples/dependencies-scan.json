@@ -1,0 +1,14 @@
+{
+  "name": "Scan de dependencias vulnerables",
+  "input": {
+    "action": "dependencies",
+    "scope": "all"
+  },
+  "expectedOutput": {
+    "success": true,
+    "action": "dependencies",
+    "dependencies": {
+      "vulnerablePackages": ">=0"
+    }
+  }
+}

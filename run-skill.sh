@@ -23,8 +23,8 @@ NC='\033[0m' # No Color
 
 # Paths
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-PROJECT_ROOT="$( cd "$SCRIPT_DIR/.." && pwd )"
-SKILLS_DIR="$SCRIPT_DIR/skills"
+PROJECT_ROOT="$SCRIPT_DIR"
+SKILLS_DIR="$SCRIPT_DIR/.agents/skills"
 
 # Funciones de utilidad
 log_info() {

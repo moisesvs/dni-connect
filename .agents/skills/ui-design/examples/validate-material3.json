@@ -1,0 +1,16 @@
+{
+  "name": "Validar Material 3 Compliance",
+  "input": {
+    "action": "validate",
+    "targetFile": "lib/core/theme/app_theme.dart"
+  },
+  "expectedOutput": {
+    "success": true,
+    "action": "validate",
+    "results": {
+      "material3Compliance": {
+        "valid": true
+      }
+    }
+  }
+}

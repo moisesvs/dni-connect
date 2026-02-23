@@ -24,13 +24,18 @@ Documentación centralizada de todos los skills disponibles para automatizar tar
 | **[crypto-validation](./crypto-validation/)** | Validar certs ECDSA | 10s | ✅ |
 | **[pki-integration](./pki-integration/)** | Conectar con PKI | 15s | ✅ |
 
-### 💾 Data & Sync (3 skills)
+### 💾 Data & Sync (2 skills)
 
 | Skill | Descripción | Timeout | Status |
 |-------|-------------|---------|--------|
 | **[database-sync](./database-sync/)** | Sincronizar a Firestore | 30s | ✅ |
 | **[storage-upload](./storage-upload/)** | Subir fotos a GCS | 30s | ✅ |
-| cache-clean | Limpiar caché local | 20s | 🔜 |
+
+### 🎨 Design & Accessibility (1 skill)
+
+| Skill | Descripción | Timeout | Status |
+|-------|-------------|---------|--------|
+| **[ui-design](./ui-design/)** | Validar Material 3 y accesibilidad | 45s | ✅ |
 
 ### 🧪 Testing & Quality (4 skills)
 

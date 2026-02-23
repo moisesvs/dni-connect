@@ -1,0 +1,14 @@
+{
+  "name": "Generar tema desde color seed",
+  "input": {
+    "action": "generate-theme",
+    "colorSeed": "#003366"
+  },
+  "expectedOutput": {
+    "success": true,
+    "action": "generate-theme",
+    "generatedFiles": [
+      "lib/core/theme/generated_theme.dart"
+    ]
+  }
+}

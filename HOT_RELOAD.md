@@ -7,36 +7,36 @@ Guía rápida para ejecutar la aplicación con hot reload automático.
 ### Opción 1: Todo Junto (Recomendado)
 
 ```bash
-npm run dev:watch
+npm run dev
 ```
 
 Esto inicia:
-- ✅ **Flutter Web** en `http://localhost:5173` con hot reload
+- ✅ **Flutter Web** en `http://localhost:something` con hot reload
 - ✅ **Backend Node.js** en `http://localhost:3000` con auto-restart
 
-### Opción 2: Solo Flutter
+### Opción 2: Solo Flutter Web
 
 ```bash
-npm run dev:flutter:watch
+npm run dev:flutter
 ```
 
-Flutter web se inicia con hot reload automático.
+Flutter web se inicia con hot reload automático en Chrome.
 
 ### Opción 3: Solo Backend
 
 ```bash
-npm run dev:backend:watch
+npm run dev:backend
 ```
 
 Backend Node.js se reinicia automáticamente en cada cambio.
 
 ## 📋 Lo que se Monitorea
 
-### Flutter (`apps/flutter/lib/**`)
+### Flutter Web (`apps/flutter/lib/**`)
 - Cambios en `.dart` → Hot reload (~1s)
 - Cambios en `pubspec.yaml` → Rebuild (~5s)
 
-### Backend (`apps/web/backend/src/**`)
+### Backend (`backend/src/**`)
 - Cambios en `.ts` → Auto-restart (~1s)
 - Cambios en `.json` → Auto-restart (~500ms)
 

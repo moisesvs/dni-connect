@@ -1,0 +1,53 @@
+{
+  "id": "ui-design",
+  "name": "UI Design",
+  "version": "1.0.0",
+  "description": "Validar, generar y verificar diseños de interfaz de usuario con Material 3",
+  "category": "design",
+  "inputs": {
+    "action": {
+      "type": "string",
+      "enum": ["validate", "generate-theme", "contrast-check", "responsivity-test", "audit"],
+      "required": true,
+      "description": "Acción a ejecutar"
+    },
+    "targetFile": {
+      "type": "string",
+      "description": "Archivo a validar/procesar"
+    },
+    "colorSeed": {
+      "type": "string",
+      "pattern": "^#[0-9A-Fa-f]{6}$",
+      "description": "Color seed para generar tema (hex)"
+    },
+    "wcagLevel": {
+      "type": "string",
+      "enum": ["A", "AA", "AAA"],
+      "default": "AA",
+      "description": "Nivel de accesibilidad WCAG"
+    },
+    "breakpoints": {
+      "type": "array",
+      "items": { "type": "string", "enum": ["mobile", "tablet", "desktop"] },
+      "default": ["mobile", "tablet", "desktop"],
+      "description": "Puntos de ruptura para testing"
+    },
+    "generateDocs": {
+      "type": "boolean",
+      "default": true,
+      "description": "Generar documentación"
+    }
+  },
+  "outputs": {
+    "success": "boolean",
+    "action": "string",
+    "results": "object",
+    "score": "number",
+    "duration": "number",
+    "generatedFiles": "string[]"
+  },
+  "timeout": 45000,
+  "retryable": true,
+  "maxRetries": 2,
+  "tags": ["design", "material3", "accessibility", "flutter", "ui"]
+}

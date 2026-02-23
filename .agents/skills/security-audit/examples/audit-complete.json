@@ -1,0 +1,17 @@
+{
+  "name": "Auditoría completa de seguridad",
+  "input": {
+    "action": "audit",
+    "scope": "all",
+    "generateReport": true
+  },
+  "expectedOutput": {
+    "success": true,
+    "action": "audit",
+    "summary": {
+      "totalIssues": ">=0",
+      "overallScore": "0-100"
+    },
+    "findings": "array"
+  }
+}

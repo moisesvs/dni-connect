@@ -7,7 +7,7 @@ Monitorear cambios en el código y ejecutar hot reload/rebuild automático para 
 Este skill gestiona el desarrollo con hot reload automático:
 
 1. **Watch Mode Flutter**: Monitorea cambios en `apps/flutter/lib/**` y ejecuta hot reload
-2. **Watch Mode Backend**: Monitorea cambios en `apps/web/backend/src/**` y reinicia el servidor
+2. **Watch Mode Backend**: Monitorea cambios en `backend/src/**` y reinicia el servidor
 3. **Sincronización**: Ejecuta ambos en paralelo
 4. **Logging**: Registra todos los cambios detectados
 5. **Error Recovery**: Reinicia automáticamente si hay errores

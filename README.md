@@ -59,6 +59,18 @@
 - Rate limiting y protección contra ataques
 - Autenticación JWT
 
+### 🎨 Diseño Moderno (Material 3)
+
+- **Dark Mode optimizado** - Colores cuidados para comodidad visual
+- **Sistema de iconos personalizado** - 60+ iconos organizados
+- **Componentes reutilizables** - 8+ componentes profesionales
+- **Paleta moderna** - Azul vibrante (#0066FF) + Púrpura (#7C3AED)
+- **Tipografía Poppins** - Font moderna y legible
+- **Responsivo** - Funciona perfectamente en web, mobile y tablet
+- **Accesible** - Contraste WCAG AA+ en todos los componentes
+
+Ver [Guía de Diseño](./docs/DESIGN_GUIDE.md) para más detalles.
+
 ---
 
 ## 🔧 Requisitos Previos
@@ -208,6 +220,26 @@ npm run dev:backend
 # Solo frontend
 npm run dev:frontend
 ```
+
+#### Desarrollo de Interfaz (UI/UX)
+
+DNI-Connect usa un **sistema de diseño moderno basado en Material 3** con componentes reutilizables:
+
+**Archivos principales:**
+- `apps/flutter/lib/core/theme/app_theme.dart` - Tema global (colores, tipografía, estilos)
+- `apps/flutter/lib/core/theme/app_icons.dart` - Sistema de iconos (60+ iconos)
+- `apps/flutter/lib/core/theme/app_components.dart` - Componentes reutilizables (8+)
+
+**Acceder a la demostración interactiva:**
+```bash
+# Ver todos los componentes en acción
+# Navega a /design-showcase en la app (ver DESIGN_GUIDE.md)
+```
+
+**Documentación de diseño:**
+- 📖 [Guía Completa de Diseño](./docs/DESIGN_GUIDE.md) - Colores, tipografía, componentes
+- 🚀 [Guía de Integración](./docs/INTEGRATION_GUIDE.md) - Cómo usar el sistema en pantallas
+- ⚡ [Referencia Rápida](./docs/DESIGN_QUICK_REFERENCE.md) - Cheat sheet para desarrollo
 
 ### Build
 
@@ -439,6 +471,50 @@ flutter build apk
 
 ---
 
+## � Sistema de Documentación Automática
+
+La documentación del proyecto se sincroniza automáticamente con cada commit:
+
+| Documento | Actualización | Propósito |
+|-----------|---------------|-----------|
+| **[README.md](README.md)** | Manual | Guía general e instalación |
+| **[AGENTS.md](AGENTS.md)** | Manual + Automática | 18 Skills y sistema de agentes |
+| **[CHANGE_LOG.md](CHANGE_LOG.md)** | ✅ **Automática con cada commit** | Historial de cambios |
+| **[QUICK_START.md](QUICK_START.md)** | Manual | Guía rápida para nuevos |
+| **[.agents/SYNC.md](.agents/SYNC.md)** | Manual | Sistema de sincronización |
+
+### Flujo Automático
+
+```bash
+# Simplemente haz un commit como siempre:
+git add .
+git commit -m "Tu cambio"
+
+# ✅ El hook post-commit actualiza automáticamente:
+# • CHANGE_LOG.md con nueva entrada
+# • Registra: commit hash, mensaje, autor, timestamp
+# • Categoriza cambios (Flutter, Backend, Docs, Skills, Config)
+```
+
+### Sincronización Manual (Opcional)
+
+```bash
+# Verificar estado de documentación y sincronización
+./sync-docs.sh
+
+# Valida:
+# ✅ CHANGE_LOG.md actualizado
+# ✅ 18 skills completamente documentados
+# ✅ README.md, AGENTS.md, CHANGE_LOG.md existen
+# ✅ Índice de skills actualizado
+# ✅ Workflows YAML válido
+# ✅ Estructura monorepo correcta
+```
+
+**Para más detalles**: Ver [.agents/SYNC.md](.agents/SYNC.md)
+
+---
+
 ## 📄 Licencia
 
 Este proyecto está bajo la licencia MIT. Ver [LICENSE](LICENSE) para más detalles.
@@ -451,6 +527,7 @@ Para reportar problemas o sugerencias:
 
 - **Issues**: Abre un issue en el repositorio
 - **Discussions**: Participa en las discusiones del proyecto
+- **Documentación Rápida**: Ver [QUICK_START.md](QUICK_START.md)
 
 ---
 

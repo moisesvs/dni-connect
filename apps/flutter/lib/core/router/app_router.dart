@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:dni_connect/features/home/presentation/home_screen.dart';
+import 'package:dni_connect/features/home/presentation/home_screen_new.dart';
 import 'package:dni_connect/features/qr_scan/presentation/qr_scan_screen.dart';
 import 'package:dni_connect/features/qr_scan/presentation/qr_verify_screen.dart';
 import 'package:dni_connect/features/nfc_read/presentation/nfc_input_screen.dart';
 import 'package:dni_connect/features/nfc_read/presentation/nfc_read_screen.dart';
 import 'package:dni_connect/features/result/presentation/result_screen.dart';
-import 'package:dni_connect/features/history/presentation/history_screen.dart';
 import 'package:dni_connect/core/widgets/app_shell.dart';
 
 final appRouter = GoRouter(
@@ -19,7 +18,7 @@ final appRouter = GoRouter(
           path: '/',
           name: 'home',
           pageBuilder: (context, state) => const MaterialPage(
-            child: HomeScreen(),
+            child: HomeScreenNew(),
           ),
         ),
         GoRoute(
@@ -60,18 +59,11 @@ final appRouter = GoRouter(
           path: '/result',
           name: 'result',
           pageBuilder: (context, state) {
-            final resultData = state.extra as Map<String, dynamic>? ?? {};
+            final resultData = state.extra as String? ?? 'No data';
             return MaterialPage(
-              child: ResultScreen(resultData: resultData),
+              child: ResultScreen(verificationResult: resultData),
             );
           },
-        ),
-        GoRoute(
-          path: '/history',
-          name: 'history',
-          pageBuilder: (context, state) => const MaterialPage(
-            child: HistoryScreen(),
-          ),
         ),
       ],
     ),

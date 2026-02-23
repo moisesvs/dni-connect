@@ -89,35 +89,19 @@ watch_flutter() {
   cd "$PROJECT_ROOT/apps/flutter"
   
   # Verificar dependencias Flutter
-  if [[ ! -d "build" ]]; then
+  if [[ ! -d ".dart_tool" ]]; then
     log_flutter "Instalando dependencias Flutter..."
     flutter pub get
   fi
   
-  case "$PLATFORM" in
-    web)
-      log_flutter "Iniciando servidor web con hot reload..."
-      flutter run -d web --web-port=5173
-      ;;
-    android)
-      log_flutter "Iniciando en Android..."
-      flutter run -d android
-      ;;
-    ios)
-      log_flutter "Iniciando en iOS..."
-      flutter run -d ios
-      ;;
-    *)
-      log_error "Plataforma desconocida: $PLATFORM"
-      exit 1
-      ;;
-  esac
+  log_flutter "Iniciando servidor web con hot reload..."
+  flutter run -d chrome
 }
 
 # Watch Backend
 watch_backend() {
   log_backend "Iniciando watch mode..."
-  cd "$PROJECT_ROOT/apps/web/backend"
+  cd "$PROJECT_ROOT/backend"
   
   # Verificar dependencias
   if [[ ! -d "node_modules" ]]; then

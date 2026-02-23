@@ -1,0 +1,18 @@
+{
+  "name": "Verificar contraste WCAG AA",
+  "input": {
+    "action": "contrast-check",
+    "wcagLevel": "AA",
+    "targetFile": "lib/core/theme/app_theme.dart"
+  },
+  "expectedOutput": {
+    "success": true,
+    "action": "contrast-check",
+    "results": {
+      "contrastRatio": {
+        "wcagLevel": "AA",
+        "passed": true
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "Validación OWASP Top 10",
+  "input": {
+    "action": "owasp",
+    "severity": "critical,high"
+  },
+  "expectedOutput": {
+    "success": true,
+    "action": "owasp",
+    "owasp": "object"
+  }
+}
