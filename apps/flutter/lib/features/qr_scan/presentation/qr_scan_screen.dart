@@ -43,7 +43,7 @@ class _QrScanScreenState extends State<QrScanScreen> {
       final String? qrData = barcode.rawValue;
       if (qrData != null && qrData.isNotEmpty) {
         isProcessing = true;
-        logger.i('QR detectado: $qrData');
+        logger.i('QR detectado (${qrData.length} caracteres)');
         
         // Navegar a la pantalla de verificación
         context.pushNamed('qr_verify', extra: qrData).then((_) {

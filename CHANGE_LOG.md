@@ -12,6 +12,13 @@ Registro de cambios y evolución de la aplicación DNI-Connect. Cada cambio sign
 
 ## [Unreleased]
 
+### 🔄 Commit: 9d6a883
+- **Mensaje**: Fix: Corregir errores de compilación en QR scanner - reemplazar withOpacity por withValues
+- **Autor**: e032284
+- **Timestamp**: 2026-02-23 10:54:36
+- 📱 **Flutter**: Cambios en aplicación móvil/webn
+
+
 ### 🔄 Commit: a0767c1
 - **Mensaje**: Fix: QR Camera Implementation - Implementar escaneo funcional con mobile_scanner
 - **Autor**: e032284
