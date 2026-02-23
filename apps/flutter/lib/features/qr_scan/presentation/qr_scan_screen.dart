@@ -10,10 +10,13 @@ class QrScanScreen extends StatefulWidget {
   State<QrScanScreen> createState() => _QrScanScreenState();
 }
 
-class _QrScanScreenState extends State<QrScanScreen> {
+class _QrScanScreenState extends State<QrScanScreen>
+    with TickerProviderStateMixin {
   late MobileScannerController controller;
   final logger = Logger();
   bool isProcessing = false;
+  late AnimationController _pulseController;
+  late AnimationController _arrowController;
 
   @override
   void initState() {
@@ -25,6 +28,18 @@ class _QrScanScreenState extends State<QrScanScreen> {
       facing: CameraFacing.back,
       torchEnabled: false,
     );
+
+    // Animación de pulso para el marco
+    _pulseController = AnimationController(
+      duration: const Duration(milliseconds: 1500),
+      vsync: this,
+    )..repeat();
+
+    // Animación de flechas
+    _arrowController = AnimationController(
+      duration: const Duration(milliseconds: 1200),
+      vsync: this,
+    )..repeat();
     
     logger.i('QrScanScreen iniciado');
   }
@@ -32,6 +47,8 @@ class _QrScanScreenState extends State<QrScanScreen> {
   @override
   void dispose() {
     controller.dispose();
+    _pulseController.dispose();
+    _arrowController.dispose();
     super.dispose();
   }
 
@@ -66,6 +83,8 @@ class _QrScanScreenState extends State<QrScanScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Escanear QR MiDni'),
@@ -93,6 +112,11 @@ class _QrScanScreenState extends State<QrScanScreen> {
             },
           ),
 
+          // Overlay oscuro
+          Container(
+            color: Colors.black.withValues(alpha: 0.3),
+          ),
+
           // Overlay con instrucciones y controles
           Positioned.fill(
             child: Column(
@@ -104,27 +128,32 @@ class _QrScanScreenState extends State<QrScanScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
-                          Icons.qr_code_2,
-                          size: 64,
-                          color: Colors.white.withValues(alpha: 0.7),
+                        ScaleTransition(
+                          scale: Tween<double>(begin: 1.0, end: 1.1).animate(
+                            CurvedAnimation(
+                              parent: _pulseController,
+                              curve: Curves.easeInOut,
+                            ),
+                          ),
+                          child: Icon(
+                            Icons.qr_code_2,
+                            size: 64,
+                            color: colorScheme.primary,
+                          ),
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          'Apunta hacia el QR',
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleLarge
-                              ?.copyWith(
+                          'Captura el QR del DNI',
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
                                 color: Colors.white,
-                                fontWeight: FontWeight.w600,
+                                fontWeight: FontWeight.w700,
                               ),
                         ),
                         const SizedBox(height: 8),
                         Text(
                           'Asegúrate de que esté bien iluminado',
                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: Colors.white.withValues(alpha: 0.8),
+                                color: Colors.white.withValues(alpha: 0.85),
                               ),
                         ),
                       ],
@@ -132,26 +161,165 @@ class _QrScanScreenState extends State<QrScanScreen> {
                   ),
                 ),
 
-                // Área de escaneo con marco
+                // Área de escaneo con flechas indicativas
                 Expanded(
                   flex: 3,
                   child: Center(
-                    child: Container(
-                      width: 280,
-                      height: 280,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.cyan,
-                          width: 3,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        // Marco principal del QR
+                        Container(
+                          width: 280,
+                          height: 280,
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: colorScheme.primary,
+                              width: 3,
+                            ),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
                         ),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          color: Colors.transparent,
+
+                        // Pulso de borde
+                        ScaleTransition(
+                          scale: Tween<double>(begin: 0.95, end: 1.05).animate(
+                            CurvedAnimation(
+                              parent: _pulseController,
+                              curve: Curves.easeInOut,
+                            ),
+                          ),
+                          child: Container(
+                            width: 280,
+                            height: 280,
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: colorScheme.primary.withValues(alpha: 0.3),
+                                width: 2,
+                              ),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          ),
                         ),
-                      ),
+
+                        // Flechas direccionales animadas
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            // Flecha superior
+                            SlideTransition(
+                              position: Tween<Offset>(
+                                begin: const Offset(0, -0.15),
+                                end: const Offset(0, -0.35),
+                              ).animate(
+                                CurvedAnimation(
+                                  parent: _arrowController,
+                                  curve: Curves.easeInOut,
+                                ),
+                              ),
+                              child: Icon(
+                                Icons.arrow_upward,
+                                color: colorScheme.primary,
+                                size: 28,
+                              ),
+                            ),
+                            // Flechas laterales
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                SlideTransition(
+                                  position: Tween<Offset>(
+                                    begin: const Offset(-0.15, 0),
+                                    end: const Offset(-0.35, 0),
+                                  ).animate(
+                                    CurvedAnimation(
+                                      parent: _arrowController,
+                                      curve: Curves.easeInOut,
+                                    ),
+                                  ),
+                                  child: Icon(
+                                    Icons.arrow_back,
+                                    color: colorScheme.primary,
+                                    size: 28,
+                                  ),
+                                ),
+                                SlideTransition(
+                                  position: Tween<Offset>(
+                                    begin: const Offset(0.15, 0),
+                                    end: const Offset(0.35, 0),
+                                  ).animate(
+                                    CurvedAnimation(
+                                      parent: _arrowController,
+                                      curve: Curves.easeInOut,
+                                    ),
+                                  ),
+                                  child: Icon(
+                                    Icons.arrow_forward,
+                                    color: colorScheme.primary,
+                                    size: 28,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            // Flecha inferior
+                            SlideTransition(
+                              position: Tween<Offset>(
+                                begin: const Offset(0, 0.15),
+                                end: const Offset(0, 0.35),
+                              ).animate(
+                                CurvedAnimation(
+                                  parent: _arrowController,
+                                  curve: Curves.easeInOut,
+                                ),
+                              ),
+                              child: Icon(
+                                Icons.arrow_downward,
+                                color: colorScheme.primary,
+                                size: 28,
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        // Mensaje flotante
+                        Positioned(
+                          bottom: -80,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
+                            decoration: BoxDecoration(
+                              color: colorScheme.primary,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                SizedBox(
+                                  width: 16,
+                                  height: 16,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      colorScheme.onPrimary,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'Escaneando...',
+                                  style: TextStyle(
+                                    color: colorScheme.onPrimary,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -159,50 +327,67 @@ class _QrScanScreenState extends State<QrScanScreen> {
                 // Controles inferiores
                 Expanded(
                   flex: 2,
-                  child: Container(
-                    color: Colors.black.withValues(alpha: 0.4),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        // Botones de control
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Instrucción adicional
+                      Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 32),
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.2),
+                          ),
+                        ),
+                        child: Row(
                           children: [
-                            // Botón de flash
-                            FloatingActionButton.extended(
-                              onPressed: _toggleFlash,
-                              label: const Text('Flash'),
-                              icon: const Icon(Icons.flash_on),
-                              backgroundColor: Colors.cyan.withValues(alpha: 0.8),
-                              foregroundColor: Colors.white,
+                            Icon(
+                              Icons.info_outline,
+                              color: colorScheme.primary,
+                              size: 20,
                             ),
-
-                            // Botón de cambiar cámara
-                            FloatingActionButton.extended(
-                              onPressed: _switchCamera,
-                              label: const Text('Cambiar'),
-                              icon: const Icon(Icons.flip_camera_android),
-                              backgroundColor: Colors.purple.withValues(alpha: 0.8),
-                              foregroundColor: Colors.white,
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                'Alinea el QR dentro del marco',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(
+                                      color: Colors.white.withValues(alpha: 0.9),
+                                    ),
+                              ),
                             ),
                           ],
                         ),
+                      ),
 
-                        const SizedBox(height: 16),
+                      const SizedBox(height: 24),
 
-                        // Texto de ayuda
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 24),
-                          child: Text(
-                            'El QR se detectará automáticamente',
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  color: Colors.white.withValues(alpha: 0.7),
-                                ),
+                      // Botones de control
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          // Botón de flash
+                          FloatingActionButton(
+                            onPressed: _toggleFlash,
+                            tooltip: 'Encender linterna',
+                            backgroundColor: colorScheme.primary,
+                            child: const Icon(Icons.flash_on),
                           ),
-                        ),
-                      ],
-                    ),
+
+                          // Botón de cambiar cámara
+                          FloatingActionButton(
+                            onPressed: _switchCamera,
+                            tooltip: 'Cambiar cámara',
+                            backgroundColor: colorScheme.primary,
+                            child: const Icon(Icons.flip_camera_android),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
               ],
