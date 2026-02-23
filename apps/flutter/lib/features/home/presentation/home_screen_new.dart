@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
-import 'package:dni_connect/core/theme/app_theme.dart';
+import 'package:dni_connect/core/theme/app_theme_simple.dart';
 
 class HomeScreenNew extends StatefulWidget {
   const HomeScreenNew({Key? key}) : super(key: key);
@@ -29,12 +29,12 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: (isDarkMode ? AppTheme.primaryLight : AppTheme.primaryColor).withValues(alpha: 0.15),
+                color: AppThemes.primaryColor.withValues(alpha: 0.15),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.person_outline,
-                color: isDarkMode ? AppTheme.primaryLight : AppTheme.primaryColor,
+                color: AppThemes.primaryColor,
                 size: 20,
               ),
             ),
@@ -78,9 +78,9 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
 
   Widget _buildHome() {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final primaryColor = isDarkMode ? AppTheme.primaryLight : AppTheme.primaryColor;
-    final successColor = isDarkMode ? AppTheme.successLight : AppTheme.successColor;
-    final textColor = isDarkMode ? AppTheme.textDark : AppTheme.textLight;
+    final primaryColor = isDarkMode ? AppThemes.primaryColor : AppThemes.primaryColor;
+    final successColor = isDarkMode ? AppThemes.successColor : AppThemes.successColor;
+    final textColor = isDarkMode ? Colors.white : Colors.black;
     
     return SingleChildScrollView(
       child: Padding(
@@ -240,8 +240,8 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                             fontSize: 13,
                             fontWeight: FontWeight.w500,
                             color: isDarkMode
-                                ? AppTheme.textDarkSecondary
-                                : AppTheme.textLightSecondary,
+                                ? Colors.grey[300]
+                                : Colors.grey[600],
                             letterSpacing: 0.1,
                           ),
                         ),
@@ -276,8 +276,8 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
             borderRadius: BorderRadius.circular(24),
             border: Border.all(
               color: isDarkMode
-                  ? AppTheme.darkBorder
-                  : AppTheme.lightBorder,
+                  ? Colors.grey[700]
+                  : Colors.grey[300],
               width: 1.5,
             ),
             boxShadow: [
@@ -311,8 +311,8 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                         fontSize: 17,
                         fontWeight: FontWeight.w700,
                         color: isDarkMode
-                            ? AppTheme.textDark
-                            : AppTheme.textLight,
+                            ? AppThemes.textDark
+                            : AppThemes.textLight,
                         letterSpacing: -0.2,
                       ),
                     ),
@@ -323,8 +323,8 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
                         color: isDarkMode
-                            ? AppTheme.textDarkSecondary
-                            : AppTheme.textLightSecondary,
+                            ? Colors.grey[300]
+                            : Colors.grey[600],
                         letterSpacing: 0.1,
                       ),
                     ),
@@ -354,14 +354,14 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
             width: 120,
             height: 120,
             decoration: BoxDecoration(
-              color: (isDarkMode ? AppTheme.primaryLight : AppTheme.primaryColor)
+              color: (isDarkMode ? AppThemes.primaryLight : AppThemes.primaryColor)
                   .withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(
               Icons.history_rounded,
               size: 60,
-              color: isDarkMode ? AppTheme.primaryLight : AppTheme.primaryColor,
+              color: isDarkMode ? AppThemes.primaryLight : AppThemes.primaryColor,
             ),
           ),
           const SizedBox(height: 24),
@@ -370,7 +370,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
             style: GoogleFonts.poppins(
               fontSize: 22,
               fontWeight: FontWeight.w700,
-              color: isDarkMode ? AppTheme.textDark : AppTheme.textLight,
+              color: isDarkMode ? AppThemes.textDark : AppThemes.textLight,
               letterSpacing: -0.3,
             ),
           ),
@@ -381,8 +381,8 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
               fontSize: 15,
               fontWeight: FontWeight.w500,
               color: isDarkMode
-                  ? AppTheme.textDarkSecondary
-                  : AppTheme.textLightSecondary,
+                  ? Colors.grey[300]
+                  : Colors.grey[600],
               letterSpacing: 0.2,
             ),
           ),
@@ -393,7 +393,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
 
   Widget _buildSettings() {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final dangerColor = isDarkMode ? AppTheme.dangerLight : AppTheme.dangerColor;
+    final dangerColor = isDarkMode ? AppThemes.dangerLight : AppThemes.dangerColor;
     
     return SingleChildScrollView(
       child: Padding(
@@ -406,7 +406,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
               style: GoogleFonts.poppins(
                 fontSize: 28,
                 fontWeight: FontWeight.w800,
-                color: isDarkMode ? AppTheme.textDark : AppTheme.textLight,
+                color: isDarkMode ? AppThemes.textDark : AppThemes.textLight,
                 letterSpacing: -0.5,
               ),
             ),
@@ -486,8 +486,8 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: isDarkMode
-                  ? AppTheme.darkBorder.withValues(alpha: 0.5)
-                  : AppTheme.lightBorder,
+                  ? Colors.grey[700].withValues(alpha: 0.5)
+                  : Colors.grey[300],
               width: 1,
             ),
             boxShadow: [
@@ -505,16 +505,16 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                 height: 48,
                 decoration: BoxDecoration(
                   color: (isDarkMode
-                          ? AppTheme.primaryLight
-                          : AppTheme.primaryColor)
+                          ? AppThemes.primaryLight
+                          : AppThemes.primaryColor)
                       .withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: Icon(
                   icon,
                   color: isDarkMode
-                      ? AppTheme.primaryLight
-                      : AppTheme.primaryColor,
+                      ? AppThemes.primaryLight
+                      : AppThemes.primaryColor,
                   size: 24,
                 ),
               ),
@@ -529,7 +529,7 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
                         color:
-                            isDarkMode ? AppTheme.textDark : AppTheme.textLight,
+                            isDarkMode ? AppThemes.textDark : AppThemes.textLight,
                         letterSpacing: -0.2,
                       ),
                     ),
@@ -540,8 +540,8 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
                         color: isDarkMode
-                            ? AppTheme.textDarkSecondary
-                            : AppTheme.textLightSecondary,
+                            ? Colors.grey[300]
+                            : Colors.grey[600],
                         letterSpacing: 0.1,
                       ),
                     ),
@@ -551,8 +551,8 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
               Icon(
                 Icons.arrow_forward_ios_rounded,
                 color: isDarkMode
-                    ? AppTheme.textDarkSecondary.withValues(alpha: 0.5)
-                    : AppTheme.textLightSecondary.withValues(alpha: 0.6),
+                    ? Colors.grey[300].withValues(alpha: 0.5)
+                    : Colors.grey[600].withValues(alpha: 0.6),
                 size: 16,
               ),
             ],
