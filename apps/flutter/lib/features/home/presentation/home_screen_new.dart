@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
+import 'package:dni_connect/core/theme/app_theme.dart';
 
 class HomeScreenNew extends StatefulWidget {
   const HomeScreenNew({Key? key}) : super(key: key);
@@ -14,33 +15,27 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        title: Text('DNI-Connect'),
         elevation: 0,
-        title: Text(
-          'DNI-Connect',
-          style: GoogleFonts.inter(
-            fontSize: 20,
-            fontWeight: FontWeight.w700,
-            color: Colors.grey[900],
-          ),
-        ),
+        centerTitle: true,
         actions: [
           Padding(
             padding: const EdgeInsets.all(16),
-            child: Center(
-              child: Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: const Color(0xFF2563EB).withOpacity(0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.person_outline,
-                  color: Color(0xFF2563EB),
-                ),
+            child: Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: (isDarkMode ? AppTheme.primaryLight : AppTheme.primaryColor).withValues(alpha: 0.15),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.person_outline,
+                color: isDarkMode ? AppTheme.primaryLight : AppTheme.primaryColor,
+                size: 20,
               ),
             ),
           ),
@@ -82,118 +77,172 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
   }
 
   Widget _buildHome() {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final primaryColor = isDarkMode ? AppTheme.primaryLight : AppTheme.primaryColor;
+    final successColor = isDarkMode ? AppTheme.successLight : AppTheme.successColor;
+    final textColor = isDarkMode ? AppTheme.textDark : AppTheme.textLight;
+    
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Welcome card
+            // Welcome card con gradiente mejorado
             Container(
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
+                gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    Color(0xFF2563EB),
-                    Color(0xFF1E40AF),
+                    primaryColor,
+                    primaryColor.withValues(alpha: 0.7),
                   ],
                 ),
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(28),
+                boxShadow: [
+                  BoxShadow(
+                    color: primaryColor.withValues(alpha: 0.3),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
               ),
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(28),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     '¡Bienvenido de vuelta!',
-                    style: GoogleFonts.inter(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w700,
+                    style: GoogleFonts.poppins(
+                      fontSize: 28,
+                      fontWeight: FontWeight.w800,
                       color: Colors.white,
+                      letterSpacing: -0.5,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 12),
                   Text(
-                    'Verifica tu identidad de forma segura',
-                    style: GoogleFonts.inter(
-                      fontSize: 14,
-                      color: Colors.white.withOpacity(0.9),
+                    'Verifica tu identidad de forma segura y rápida',
+                    style: GoogleFonts.poppins(
+                      fontSize: 15,
+                      color: Colors.white.withValues(alpha: 0.95),
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: 0.2,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () => context.pushNamed('qr_scan'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: primaryColor,
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 12,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                    child: Text(
+                      'Iniciar verificación',
+                      style: GoogleFonts.poppins(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.3,
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 32),
-            // Verification methods
+            const SizedBox(height: 40),
+            
+            // Título de métodos
             Text(
               'Métodos de verificación',
-              style: GoogleFonts.inter(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: Colors.grey[900],
-              ),
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: -0.2,
+                  ) ??
+                  const TextStyle(),
             ),
             const SizedBox(height: 16),
+            
+            // Tarjeta QR
             _buildVerificationCard(
               icon: Icons.qr_code_2,
               title: 'Escanear QR',
-              subtitle: 'Lee el QR de tu DNI',
+              subtitle: 'Lee el código QR de tu DNI',
               onTap: () => context.pushNamed('qr_scan'),
-              color: const Color(0xFF2563EB),
+              color: primaryColor,
+              isDarkMode: isDarkMode,
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
+            
+            // Tarjeta NFC
             _buildVerificationCard(
               icon: Icons.nfc,
               title: 'Leer NFC',
-              subtitle: 'Lee el chip de tu DNI',
+              subtitle: 'Lee el chip de tu DNI electrónico',
               onTap: () => context.pushNamed('nfc_input'),
-              color: const Color(0xFF10B981),
+              color: successColor,
+              isDarkMode: isDarkMode,
             ),
-            const SizedBox(height: 32),
-            // Security info
+            const SizedBox(height: 40),
+            
+            // Información de seguridad
             Container(
               decoration: BoxDecoration(
-                color: const Color(0xFFF0F9FF),
-                borderRadius: BorderRadius.circular(16),
+                color: primaryColor.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(24),
                 border: Border.all(
-                  color: const Color(0xFF2563EB).withOpacity(0.2),
+                  color: primaryColor.withValues(alpha: 0.2),
+                  width: 1.5,
                 ),
               ),
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(20),
               child: Row(
                 children: [
                   Container(
-                    width: 40,
-                    height: 40,
+                    width: 48,
+                    height: 48,
                     decoration: BoxDecoration(
-                      color: const Color(0xFF2563EB).withOpacity(0.1),
+                      color: primaryColor.withValues(alpha: 0.15),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(
-                      Icons.shield_outlined,
-                      color: Color(0xFF2563EB),
-                      size: 20,
+                    child: Icon(
+                      Icons.shield_verified_outlined,
+                      color: primaryColor,
+                      size: 24,
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 16),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Verificación segura',
-                          style: GoogleFonts.inter(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.grey[900],
+                          'Protección de datos',
+                          style: GoogleFonts.poppins(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                            color: textColor,
+                            letterSpacing: 0.2,
                           ),
                         ),
+                        const SizedBox(height: 4),
                         Text(
-                          'Tus datos están encriptados',
-                          style: GoogleFonts.inter(
-                            fontSize: 12,
-                            color: Colors.grey[600],
+                          'Encriptación de extremo a extremo',
+                          style: GoogleFonts.poppins(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                            color: isDarkMode
+                                ? AppTheme.textDarkSecondary
+                                : AppTheme.textLightSecondary,
+                            letterSpacing: 0.1,
                           ),
                         ),
                       ],
@@ -215,53 +264,78 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
     required String subtitle,
     required VoidCallback onTap,
     required Color color,
+    required bool isDarkMode,
   }) {
     return Material(
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(24),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.grey[200]!),
+            color: Theme.of(context).cardColor,
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(
+              color: isDarkMode
+                  ? AppTheme.darkBorder
+                  : AppTheme.lightBorder,
+              width: 1.5,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: isDarkMode ? 0.3 : 0.06),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(24),
           child: Row(
             children: [
               Container(
-                width: 56,
-                height: 56,
+                width: 64,
+                height: 64,
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(14),
+                  color: color.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(18),
                 ),
-                child: Icon(icon, color: color, size: 28),
+                child: Icon(icon, color: color, size: 32),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 20),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       title,
-                      style: GoogleFonts.inter(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.grey[900],
+                      style: GoogleFonts.poppins(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w700,
+                        color: isDarkMode
+                            ? AppTheme.textDark
+                            : AppTheme.textLight,
+                        letterSpacing: -0.2,
                       ),
                     ),
+                    const SizedBox(height: 6),
                     Text(
                       subtitle,
-                      style: GoogleFonts.inter(
-                        fontSize: 13,
-                        color: Colors.grey[600],
+                      style: GoogleFonts.poppins(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: isDarkMode
+                            ? AppTheme.textDarkSecondary
+                            : AppTheme.textLightSecondary,
+                        letterSpacing: 0.1,
                       ),
                     ),
                   ],
                 ),
               ),
-              Icon(Icons.arrow_forward, color: Colors.grey[400]),
+              Icon(
+                Icons.arrow_forward_rounded,
+                color: color.withValues(alpha: 0.6),
+                size: 20,
+              ),
             ],
           ),
         ),
@@ -270,30 +344,46 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
   }
 
   Widget _buildHistory() {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.history,
-            size: 64,
-            color: Colors.grey[300],
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'Historial vacío',
-            style: GoogleFonts.inter(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: Colors.grey[700],
+          Container(
+            width: 120,
+            height: 120,
+            decoration: BoxDecoration(
+              color: (isDarkMode ? AppTheme.primaryLight : AppTheme.primaryColor)
+                  .withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.history_rounded,
+              size: 60,
+              color: isDarkMode ? AppTheme.primaryLight : AppTheme.primaryColor,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 24),
           Text(
-            'Aquí aparecerán tus verificaciones',
-            style: GoogleFonts.inter(
-              fontSize: 14,
-              color: Colors.grey[600],
+            'Historial vacío',
+            style: GoogleFonts.poppins(
+              fontSize: 22,
+              fontWeight: FontWeight.w700,
+              color: isDarkMode ? AppTheme.textDark : AppTheme.textLight,
+              letterSpacing: -0.3,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            'Aquí aparecerán tus verificaciones realizadas',
+            style: GoogleFonts.poppins(
+              fontSize: 15,
+              fontWeight: FontWeight.w500,
+              color: isDarkMode
+                  ? AppTheme.textDarkSecondary
+                  : AppTheme.textLightSecondary,
+              letterSpacing: 0.2,
             ),
           ),
         ],
@@ -302,56 +392,76 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
   }
 
   Widget _buildSettings() {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final dangerColor = isDarkMode ? AppTheme.dangerLight : AppTheme.dangerColor;
+    
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            Text(
+              'Configuración',
+              style: GoogleFonts.poppins(
+                fontSize: 28,
+                fontWeight: FontWeight.w800,
+                color: isDarkMode ? AppTheme.textDark : AppTheme.textLight,
+                letterSpacing: -0.5,
+              ),
+            ),
+            const SizedBox(height: 32),
             _buildSettingItem(
-              icon: Icons.person_outline,
+              icon: Icons.person_outline_rounded,
               title: 'Perfil',
-              subtitle: 'Edita tu información',
+              subtitle: 'Edita tu información personal',
               onTap: () {},
+              isDarkMode: isDarkMode,
             ),
             _buildSettingItem(
-              icon: Icons.security_outlined,
+              icon: Icons.security_rounded,
               title: 'Seguridad',
-              subtitle: 'Gestiona tu contraseña',
+              subtitle: 'Gestiona tu contraseña y privacidad',
               onTap: () {},
+              isDarkMode: isDarkMode,
             ),
             _buildSettingItem(
-              icon: Icons.notifications_outlined,
+              icon: Icons.notifications_outlined_rounded,
               title: 'Notificaciones',
               subtitle: 'Configura tus preferencias',
               onTap: () {},
+              isDarkMode: isDarkMode,
             ),
             _buildSettingItem(
-              icon: Icons.info_outlined,
+              icon: Icons.info_outline_rounded,
               title: 'Acerca de',
-              subtitle: 'Versión 1.0.0',
+              subtitle: 'Versión 2.0 • Build 001',
               onTap: () {},
+              isDarkMode: isDarkMode,
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 40),
             OutlinedButton(
               onPressed: () {
                 // Handle logout
               },
               style: OutlinedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                side: const BorderSide(color: Color(0xFFEF4444)),
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                side: BorderSide(color: dangerColor, width: 2.5),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(18),
                 ),
               ),
               child: Text(
                 'Cerrar sesión',
-                style: GoogleFonts.inter(
-                  color: const Color(0xFFEF4444),
-                  fontWeight: FontWeight.w600,
+                style: GoogleFonts.poppins(
+                  color: dangerColor,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
+                  letterSpacing: 0.3,
                 ),
               ),
             ),
+            const SizedBox(height: 24),
           ],
         ),
       ),
@@ -363,20 +473,51 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
     required String title,
     required String subtitle,
     required VoidCallback onTap,
+    required bool isDarkMode,
   }) {
     return Material(
       child: InkWell(
         onTap: onTap,
+        borderRadius: BorderRadius.circular(20),
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
           decoration: BoxDecoration(
-            border: Border(
-              bottom: BorderSide(color: Colors.grey[200]!),
+            color: Theme.of(context).cardColor,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: isDarkMode
+                  ? AppTheme.darkBorder.withValues(alpha: 0.5)
+                  : AppTheme.lightBorder,
+              width: 1,
             ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: isDarkMode ? 0.1 : 0.04),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
           child: Row(
             children: [
-              Icon(icon, color: Colors.grey[600], size: 24),
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: (isDarkMode
+                          ? AppTheme.primaryLight
+                          : AppTheme.primaryColor)
+                      .withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Icon(
+                  icon,
+                  color: isDarkMode
+                      ? AppTheme.primaryLight
+                      : AppTheme.primaryColor,
+                  size: 24,
+                ),
+              ),
               const SizedBox(width: 16),
               Expanded(
                 child: Column(
@@ -384,23 +525,36 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                   children: [
                     Text(
                       title,
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.poppins(
                         fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.grey[900],
+                        fontWeight: FontWeight.w700,
+                        color:
+                            isDarkMode ? AppTheme.textDark : AppTheme.textLight,
+                        letterSpacing: -0.2,
                       ),
                     ),
+                    const SizedBox(height: 4),
                     Text(
                       subtitle,
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.poppins(
                         fontSize: 13,
-                        color: Colors.grey[600],
+                        fontWeight: FontWeight.w500,
+                        color: isDarkMode
+                            ? AppTheme.textDarkSecondary
+                            : AppTheme.textLightSecondary,
+                        letterSpacing: 0.1,
                       ),
                     ),
                   ],
                 ),
               ),
-              Icon(Icons.arrow_forward_ios, color: Colors.grey[400], size: 16),
+              Icon(
+                Icons.arrow_forward_ios_rounded,
+                color: isDarkMode
+                    ? AppTheme.textDarkSecondary.withValues(alpha: 0.5)
+                    : AppTheme.textLightSecondary.withValues(alpha: 0.6),
+                size: 16,
+              ),
             ],
           ),
         ),
