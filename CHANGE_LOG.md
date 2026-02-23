@@ -12,6 +12,45 @@ Registro de cambios y evolución de la aplicación DNI-Connect. Cada cambio sign
 
 ## [Unreleased]
 
+### � Corregido
+
+#### QR Camera Scanning Implementation Fix (23 Feb 2026)
+- 🔧 **Problema Identificado**: Pantalla de escaneo QR estaba vacía (placeholder sin implementación)
+- ✅ **Solución Implementada**: Implementación completa de cámara con `mobile_scanner`
+
+**qr_scan_screen.dart** (150+ líneas)
+  - Inicialización de `MobileScannerController` con formato QR
+  - Detección automática de códigos QR en tiempo real
+  - Interfaz visual mejorada con marco de guía
+  - Botones de control: Flash (linterna) y cambiar cámara
+  - Manejo de errores y estados de carga
+  - Navegación automática a verificación al detectar QR
+  - Flag `isProcessing` para prevenir múltiples navegaciones
+
+**qr_verify_screen.dart** (180+ líneas)
+  - Muestra datos del QR en contenedor con monospace font
+  - Información de seguridad (cifrado X.509, verificación DGP)
+  - Contador de caracteres
+  - Botón para copiar datos
+  - Acciones: Verificar QR (con loading 2s) y Escanear de Nuevo
+  - Diseño mejorado con colores cyan/naranja
+
+**Características**:
+  - ✅ Detección automática de QR
+  - ✅ Controles de flash y cambio de cámara
+  - ✅ UI guiada para usuario
+  - ✅ Integración con router existente
+  - ✅ Manejo de permisos de cámara
+  - ✅ Error handling robusto
+  - ✅ Dark mode compatible
+
+### �🔄 Commit: fe7610b
+- **Mensaje**: Dark Mode Enhancements v2.0: Gradientes, animaciones y mejor visual hierarchy
+- **Autor**: e032284
+- **Timestamp**: 2026-02-23 10:42:54
+- 📱 **Flutter**: Cambios en aplicación móvil/webn- 🔧 **Backend**: Cambios en API Node.js/TypeScriptn- 🤖 **Skills**: Actualización en sistema de automatizaciónn- 📚 **Docs**: Actualización de documentaciónn- ⚙️ **Config**: Cambios en configuración del proyecton
+
+
 ### 🎨 Mejorado
 
 #### Dark Mode Enhancements v2.0 (23 Feb 2026)
