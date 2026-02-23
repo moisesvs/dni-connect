@@ -1,0 +1,77 @@
+{
+  "id": "dev-watch",
+  "name": "Development Watch with Hot Reload",
+  "description": "Monitorea cambios y ejecuta hot reload/restart automático",
+  "version": "1.0.0",
+  "inputs": {
+    "target": {
+      "type": "string",
+      "enum": ["flutter", "backend", "all"],
+      "default": "all",
+      "description": "Target a monitorear: flutter, backend, o ambos"
+    },
+    "platform": {
+      "type": "string",
+      "enum": ["web", "android", "ios"],
+      "default": "web",
+      "description": "Plataforma Flutter (solo si target es flutter)"
+    },
+    "verbose": {
+      "type": "boolean",
+      "default": true,
+      "description": "Modo verbose con logs detallados"
+    },
+    "watchPaths": {
+      "type": "array",
+      "default": ["src/**", "lib/**"],
+      "description": "Rutas a monitorear"
+    },
+    "ignorePaths": {
+      "type": "array",
+      "default": [
+        "node_modules/**",
+        ".dart_tool/**",
+        "build/**",
+        "dist/**",
+        ".next/**",
+        ".git/**"
+      ],
+      "description": "Rutas a ignorar"
+    }
+  },
+  "outputs": {
+    "success": {
+      "type": "boolean",
+      "description": "Indicador de éxito"
+    },
+    "processes": {
+      "type": "object",
+      "description": "Estado de procesos en ejecución"
+    },
+    "filesWatched": {
+      "type": "number",
+      "description": "Total de archivos monitoreados"
+    },
+    "totalChanges": {
+      "type": "number",
+      "description": "Total de cambios detectados"
+    }
+  },
+  "requirements": {
+    "node": ">=20.0.0",
+    "npm": ">=9.0.0",
+    "packages": [
+      "chokidar-cli",
+      "nodemon"
+    ]
+  },
+  "commands": {
+    "flutter": {
+      "watch": "flutter run --target lib/main.dart --device-id=web -v",
+      "watchAnd": "chokidar 'apps/flutter/lib/**/*.dart' -c 'echo \"File changed: {path}\"' --initial"
+    },
+    "backend": {
+      "watch": "nodemon --watch apps/web/backend/src --ext ts,json --exec 'npm run start --workspace=apps/web/backend' --delay 500ms"
+    }
+  }
+}

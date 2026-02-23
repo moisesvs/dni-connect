@@ -1,0 +1,53 @@
+{
+  "name": "lint-check",
+  "version": "1.0.0",
+  "category": "quality",
+  "description": "Análisis estático y formateo de código",
+  "timeout": 30000,
+  "inputs": {
+    "fix": {
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "description": "Corregir problemas"
+    },
+    "format": {
+      "type": "boolean",
+      "required": false,
+      "default": true,
+      "description": "Formatear con Prettier"
+    },
+    "strict": {
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "description": "Modo estricto"
+    }
+  },
+  "outputs": {
+    "success": {
+      "type": "boolean",
+      "description": "¿Validación exitosa?"
+    },
+    "errors": {
+      "type": "number",
+      "description": "Número de errores"
+    },
+    "warnings": {
+      "type": "number",
+      "description": "Número de advertencias"
+    },
+    "fixed": {
+      "type": "number",
+      "description": "Problemas corregidos"
+    },
+    "formatted": {
+      "type": "number",
+      "description": "Archivos formateados"
+    },
+    "duration": {
+      "type": "number",
+      "description": "Duración en ms"
+    }
+  }
+}

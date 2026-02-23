@@ -1,0 +1,73 @@
+name: dni_connect
+description: "Verificación de identidad digital mediante DNIe (NFC) y QR MiDNI"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.2.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # UI
+  cupertino_icons: ^1.0.8
+  google_fonts: ^6.1.0
+  flutter_animate: ^4.3.0
+  go_router: ^14.0.0
+
+  # Cámara y QR
+  mobile_scanner: ^5.1.0
+
+  # NFC
+  flutter_nfc_kit: ^3.5.2
+  ndef: ^0.3.1
+
+  # Networking
+  http: ^1.2.0
+  dio: ^5.4.0
+
+  # Estado
+  flutter_riverpod: ^2.4.9
+  riverpod_annotation: ^2.3.3
+
+  # Crypto (ECDSA, PACE, ASN.1)
+  pointycastle: ^3.7.4
+  asn1lib: ^1.5.3
+
+  # Almacenamiento local
+  shared_preferences: ^2.2.2
+  flutter_secure_storage: ^9.0.0
+
+  # Firebase
+  firebase_core: ^2.25.0
+  cloud_firestore: ^4.15.0
+  firebase_storage: ^11.6.0
+  firebase_auth: ^4.17.0
+
+  # Utilidades
+  uuid: ^4.3.3
+  intl: ^0.19.0
+  logger: ^2.0.2+1
+  permission_handler: ^11.3.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.1
+  riverpod_generator: ^2.3.9
+  build_runner: ^2.4.8
+  custom_lint: ^0.6.2
+  riverpod_lint: ^2.3.7
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+    - assets/icons/
+
+  fonts:
+    - family: DNIConnectIcons
+      fonts:
+        - asset: assets/fonts/DNIConnectIcons.ttf

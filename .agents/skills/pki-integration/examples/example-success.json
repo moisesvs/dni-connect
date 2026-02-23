@@ -1,0 +1,10 @@
+{
+  "input": {
+    "certRef": "abc123xyz",
+    "validateOcsp": true
+  },
+  "expectedOutput": {
+    "success": true,
+    "ocspStatus": "good"
+  }
+}

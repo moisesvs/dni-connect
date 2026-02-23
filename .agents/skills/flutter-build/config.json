@@ -1,0 +1,38 @@
+{
+  "id": "flutter-build",
+  "name": "Flutter Build",
+  "version": "1.0.0",
+  "description": "Compilar y validar la aplicación Flutter para Web, Android e iOS",
+  "category": "build",
+  "inputs": {
+    "platform": {
+      "type": "string",
+      "enum": ["web", "android", "ios", "all"],
+      "required": true,
+      "description": "Plataforma objetivo"
+    },
+    "mode": {
+      "type": "string",
+      "enum": ["debug", "release"],
+      "default": "debug",
+      "description": "Modo de compilación"
+    },
+    "clean": {
+      "type": "boolean",
+      "default": false,
+      "description": "Ejecutar flutter clean antes de compilar"
+    }
+  },
+  "outputs": {
+    "success": "boolean",
+    "platform": "string",
+    "mode": "string",
+    "outputPath": "string",
+    "duration": "number",
+    "errors": "string[]",
+    "warnings": "string[]"
+  },
+  "timeout": 300000,
+  "retryable": true,
+  "maxRetries": 2
+}

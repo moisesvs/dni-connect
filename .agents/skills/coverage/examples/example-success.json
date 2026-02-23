@@ -1,0 +1,16 @@
+{
+  "input": {
+    "format": "lcov",
+    "minThreshold": 80
+  },
+  "expectedOutput": {
+    "success": true,
+    "meetsThreshold": true,
+    "coverage": {
+      "statements": 89.5,
+      "branches": 85.2,
+      "functions": 90.1,
+      "lines": 89.8
+    }
+  }
+}

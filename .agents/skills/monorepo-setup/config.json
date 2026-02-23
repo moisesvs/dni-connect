@@ -1,0 +1,49 @@
+{
+  "name": "monorepo-setup",
+  "version": "1.0.0",
+  "category": "infrastructure",
+  "description": "Instalar dependencias y configurar workspaces",
+  "timeout": 120000,
+  "inputs": {
+    "installAll": {
+      "type": "boolean",
+      "required": false,
+      "default": true,
+      "description": "Instalar todas las dependencias"
+    },
+    "ci": {
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "description": "Modo CI"
+    },
+    "clean": {
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "description": "Limpiar node_modules"
+    }
+  },
+  "outputs": {
+    "success": {
+      "type": "boolean",
+      "description": "¿Setup exitoso?"
+    },
+    "nodeVersion": {
+      "type": "string",
+      "description": "Versión de Node.js"
+    },
+    "packagesInstalled": {
+      "type": "number",
+      "description": "Total de paquetes"
+    },
+    "workspacesConfigured": {
+      "type": "number",
+      "description": "Workspaces configurados"
+    },
+    "duration": {
+      "type": "number",
+      "description": "Duración en ms"
+    }
+  }
+}

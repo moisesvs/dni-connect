@@ -1,0 +1,53 @@
+{
+  "name": "deploy-backend",
+  "version": "1.0.0",
+  "category": "deployment",
+  "description": "Desplegar backend en Google Cloud Run",
+  "timeout": 300000,
+  "inputs": {
+    "environment": {
+      "type": "string",
+      "required": false,
+      "default": "production",
+      "enum": ["development", "staging", "production"],
+      "description": "Entorno de despliegue"
+    },
+    "version": {
+      "type": "string",
+      "required": false,
+      "description": "Versión a desplegar"
+    },
+    "region": {
+      "type": "string",
+      "required": false,
+      "default": "europe-west1",
+      "description": "Región GCP"
+    }
+  },
+  "outputs": {
+    "success": {
+      "type": "boolean",
+      "description": "¿Despliegue exitoso?"
+    },
+    "serviceUrl": {
+      "type": "string",
+      "description": "URL de la aplicación desplegada"
+    },
+    "version": {
+      "type": "string",
+      "description": "Versión desplegada"
+    },
+    "imageDigest": {
+      "type": "string",
+      "description": "Digest de la imagen Docker"
+    },
+    "deploymentTime": {
+      "type": "string",
+      "description": "Fecha de despliegue"
+    },
+    "duration": {
+      "type": "number",
+      "description": "Duración en ms"
+    }
+  }
+}

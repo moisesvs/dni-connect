@@ -1,0 +1,43 @@
+{
+  "id": "qr-verification",
+  "name": "QR Verification",
+  "version": "1.0.0",
+  "description": "Verificar y validar QRs MiDNI (ICAO 9303 Parte 13)",
+  "category": "verification",
+  "inputs": {
+    "qrData": {
+      "type": "string|bytes",
+      "required": true,
+      "description": "Datos del QR"
+    },
+    "format": {
+      "type": "string",
+      "enum": ["base64", "hex", "binary"],
+      "default": "base64",
+      "description": "Formato de qrData"
+    },
+    "validateSignature": {
+      "type": "boolean",
+      "default": true,
+      "description": "Validar firma ECDSA"
+    },
+    "validateTimestamp": {
+      "type": "boolean",
+      "default": true,
+      "description": "Validar timestamps"
+    },
+    "checkRevocation": {
+      "type": "boolean",
+      "default": true,
+      "description": "Verificar revocación OCSP"
+    }
+  },
+  "outputs": {
+    "success": "boolean",
+    "verification": "object",
+    "steps": "object[]",
+    "totalDuration": "number"
+  },
+  "timeout": 60000,
+  "retryable": false
+}

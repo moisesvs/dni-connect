@@ -1,0 +1,54 @@
+{
+  "name": "flutter-test",
+  "version": "1.0.0",
+  "category": "testing",
+  "description": "Ejecutar tests de Flutter",
+  "timeout": 90000,
+  "inputs": {
+    "platform": {
+      "type": "string",
+      "required": false,
+      "default": "web",
+      "enum": ["web", "android", "ios"],
+      "description": "Plataforma objetivo"
+    },
+    "coverage": {
+      "type": "boolean",
+      "required": false,
+      "default": true,
+      "description": "Generar cobertura"
+    },
+    "watch": {
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "description": "Modo watch"
+    }
+  },
+  "outputs": {
+    "success": {
+      "type": "boolean",
+      "description": "¿Tests ejecutados exitosamente?"
+    },
+    "testsRun": {
+      "type": "number",
+      "description": "Total de tests"
+    },
+    "testsPassed": {
+      "type": "number",
+      "description": "Tests pasados"
+    },
+    "testsFailed": {
+      "type": "number",
+      "description": "Tests fallidos"
+    },
+    "coverage": {
+      "type": "object",
+      "description": "Cobertura de código"
+    },
+    "duration": {
+      "type": "number",
+      "description": "Duración en ms"
+    }
+  }
+}

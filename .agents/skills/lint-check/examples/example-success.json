@@ -1,0 +1,11 @@
+{
+  "input": {
+    "fix": false,
+    "format": true
+  },
+  "expectedOutput": {
+    "success": true,
+    "errors": 0,
+    "warnings": 0
+  }
+}

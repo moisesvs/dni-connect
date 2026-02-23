@@ -1,0 +1,35 @@
+{
+  "id": "backend-start",
+  "name": "Backend Start",
+  "version": "1.0.0",
+  "description": "Iniciar el servidor Node.js backend de DNI-Connect",
+  "category": "server",
+  "inputs": {
+    "port": {
+      "type": "number",
+      "default": 3001,
+      "description": "Puerto en el que escuchar"
+    },
+    "environment": {
+      "type": "string",
+      "enum": ["development", "production"],
+      "default": "development",
+      "description": "Entorno de ejecución"
+    },
+    "withHealthCheck": {
+      "type": "boolean",
+      "default": true,
+      "description": "Ejecutar health check al iniciar"
+    }
+  },
+  "outputs": {
+    "success": "boolean",
+    "port": "number",
+    "baseUrl": "string",
+    "uptime": "number",
+    "endpoints": "object"
+  },
+  "timeout": 30000,
+  "retryable": true,
+  "maxRetries": 3
+}

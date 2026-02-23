@@ -1,0 +1,43 @@
+{
+  "id": "crypto-validation",
+  "name": "Crypto Validation",
+  "version": "1.0.0",
+  "description": "Validar certificados X.509 y verificar firmas ECDSA",
+  "category": "security",
+  "inputs": {
+    "certificate": {
+      "type": "string|bytes",
+      "required": true,
+      "description": "Certificado X.509 (base64/pem/der)"
+    },
+    "signature": {
+      "type": "string|bytes",
+      "required": true,
+      "description": "Firma ECDSA (hex/base64)"
+    },
+    "signedData": {
+      "type": "string|bytes",
+      "required": true,
+      "description": "Datos originales (hex/base64)"
+    },
+    "certificateChain": {
+      "type": "array",
+      "description": "Cadena completa de certificados"
+    },
+    "checkRevocation": {
+      "type": "boolean",
+      "default": true,
+      "description": "Verificar estado OCSP"
+    }
+  },
+  "outputs": {
+    "success": "boolean",
+    "certificate": "object",
+    "signature": "object",
+    "chain": "object",
+    "revocation": "object"
+  },
+  "timeout": 30000,
+  "retryable": true,
+  "maxRetries": 2
+}

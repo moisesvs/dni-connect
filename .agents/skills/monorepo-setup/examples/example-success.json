@@ -1,0 +1,11 @@
+{
+  "input": {
+    "installAll": true,
+    "ci": false
+  },
+  "expectedOutput": {
+    "success": true,
+    "packagesInstalled": 1245,
+    "workspacesConfigured": 3
+  }
+}

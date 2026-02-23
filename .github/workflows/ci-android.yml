@@ -1,0 +1,137 @@
+name: CI - Build Android
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'apps/flutter/**'
+      - 'packages/core/**'
+      - '.github/workflows/ci-android.yml'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'apps/flutter/**'
+      - 'packages/core/**'
+
+env:
+  FLUTTER_VERSION: '3.24.0'
+  JDK_VERSION: '17'
+
+jobs:
+  # Core Package Testing
+  core-package:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/core
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: 'packages/core/package-lock.json'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Run tests
+        run: npm test --if-present
+        continue-on-error: true
+
+  # Flutter Android Build
+  flutter-android:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/flutter
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ env.JDK_VERSION }}
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Analyze code
+        run: flutter analyze
+        continue-on-error: true
+
+      - name: Format check
+        run: flutter format --set-exit-if-changed .
+        continue-on-error: true
+
+      - name: Build APK
+        run: flutter build apk --release
+        env:
+          JAVA_TOOL_OPTIONS: -Xmx4096m
+
+      - name: Build App Bundle (AAB)
+        run: flutter build appbundle --release
+        env:
+          JAVA_TOOL_OPTIONS: -Xmx4096m
+
+      - name: Upload APK artifact
+        if: success()
+        uses: actions/upload-artifact@v3
+        with:
+          name: flutter-android-apk
+          path: apps/flutter/build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 7
+
+      - name: Upload AAB artifact
+        if: success()
+        uses: actions/upload-artifact@v3
+        with:
+          name: flutter-android-aab
+          path: apps/flutter/build/app/outputs/bundle/release/app-release.aab
+          retention-days: 7
+
+  # Summary
+  android-build-summary:
+    runs-on: ubuntu-latest
+    needs: [core-package, flutter-android]
+    if: always()
+
+    steps:
+      - name: Check Android build status
+        run: |
+          echo "=== Android Build Summary ==="
+          echo "Core Package: ${{ needs.core-package.result }}"
+          echo "Flutter Android: ${{ needs.flutter-android.result }}"
+          
+          if [ "${{ needs.core-package.result }}" != "success" ] || \
+             [ "${{ needs.flutter-android.result }}" != "success" ]; then
+            echo "❌ Android build failed"
+            exit 1
+          else
+            echo "✅ Android build successful"
+          fi
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: artifacts
+
+      - name: List artifacts
+        run: |
+          echo "=== Build Artifacts ==="
+          find artifacts -type f -exec ls -lh {} \;

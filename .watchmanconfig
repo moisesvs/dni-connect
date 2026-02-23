@@ -1,0 +1,14 @@
+{
+  "ignore_dirs": [
+    ".git",
+    ".next",
+    ".dart_tool",
+    "build",
+    "dist",
+    "node_modules",
+    ".vscode",
+    ".idea",
+    ".DS_Store"
+  ],
+  "watch_root": "/Users/e032284/Proyectos/DNI-Connect/dni-connect"
+}

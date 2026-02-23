@@ -1,0 +1,17 @@
+{
+  "description": "Watch solo backend con auto-restart",
+  "input": {
+    "target": "backend",
+    "verbose": true
+  },
+  "expectedOutput": {
+    "success": true,
+    "processes": {
+      "backend": {
+        "status": "running",
+        "port": 3000,
+        "restarts": 0
+      }
+    }
+  }
+}

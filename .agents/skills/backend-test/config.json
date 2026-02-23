@@ -1,0 +1,60 @@
+{
+  "name": "backend-test",
+  "version": "1.0.0",
+  "category": "testing",
+  "description": "Ejecutar tests del backend Node.js",
+  "timeout": 60000,
+  "inputs": {
+    "watch": {
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "description": "Modo watch"
+    },
+    "coverage": {
+      "type": "boolean",
+      "required": false,
+      "default": true,
+      "description": "Generar cobertura"
+    },
+    "verbose": {
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "description": "Salida detallada"
+    },
+    "env": {
+      "type": "string",
+      "required": false,
+      "default": "development",
+      "enum": ["development", "testing", "production"],
+      "description": "Entorno de ejecución"
+    }
+  },
+  "outputs": {
+    "success": {
+      "type": "boolean",
+      "description": "¿Tests ejecutados exitosamente?"
+    },
+    "testsRun": {
+      "type": "number",
+      "description": "Total de tests ejecutados"
+    },
+    "testsPassed": {
+      "type": "number",
+      "description": "Tests pasados"
+    },
+    "testsFailed": {
+      "type": "number",
+      "description": "Tests fallidos"
+    },
+    "coverage": {
+      "type": "object",
+      "description": "Porcentaje de cobertura"
+    },
+    "duration": {
+      "type": "number",
+      "description": "Duración en ms"
+    }
+  }
+}

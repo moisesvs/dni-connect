@@ -1,0 +1,18 @@
+{
+  "description": "Watch solo Flutter con hot reload",
+  "input": {
+    "target": "flutter",
+    "platform": "web",
+    "verbose": true
+  },
+  "expectedOutput": {
+    "success": true,
+    "processes": {
+      "flutter": {
+        "status": "running",
+        "platform": "web",
+        "reloads": 0
+      }
+    }
+  }
+}

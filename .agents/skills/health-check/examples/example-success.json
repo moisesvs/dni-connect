@@ -1,0 +1,19 @@
+{
+  "input": {
+    "service": "all"
+  },
+  "expectedOutput": {
+    "success": true,
+    "services": {
+      "backend": {
+        "status": "healthy"
+      },
+      "pki": {
+        "status": "healthy"
+      },
+      "ocsp": {
+        "status": "healthy"
+      }
+    }
+  }
+}

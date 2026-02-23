@@ -1,0 +1,10 @@
+{
+  "input": {
+    "userId": "user@example.com",
+    "photoPath": "./photo.jpg"
+  },
+  "expectedOutput": {
+    "success": true,
+    "storagePath": "photos/user@example.com/2026-02-20-photo.jpg"
+  }
+}

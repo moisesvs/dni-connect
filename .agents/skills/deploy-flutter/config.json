@@ -1,0 +1,57 @@
+{
+  "name": "deploy-flutter",
+  "version": "1.0.0",
+  "category": "deployment",
+  "description": "Publicar apps en Play Store / App Store",
+  "timeout": 600000,
+  "inputs": {
+    "platform": {
+      "type": "string",
+      "required": true,
+      "enum": ["android", "ios"],
+      "description": "Plataforma objetivo"
+    },
+    "track": {
+      "type": "string",
+      "required": false,
+      "default": "internal",
+      "enum": ["internal", "alpha", "beta", "production"],
+      "description": "Track de publicación"
+    },
+    "version": {
+      "type": "string",
+      "required": false,
+      "description": "Versión a publicar"
+    }
+  },
+  "outputs": {
+    "success": {
+      "type": "boolean",
+      "description": "¿Publicación exitosa?"
+    },
+    "platform": {
+      "type": "string",
+      "description": "Plataforma publicada"
+    },
+    "buildId": {
+      "type": "string",
+      "description": "ID del build"
+    },
+    "appBundle": {
+      "type": "string",
+      "description": "Nombre del artefacto"
+    },
+    "size": {
+      "type": "number",
+      "description": "Tamaño en bytes"
+    },
+    "track": {
+      "type": "string",
+      "description": "Track utilizado"
+    },
+    "duration": {
+      "type": "number",
+      "description": "Duración en ms"
+    }
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "id": "nfc-reading",
+  "name": "NFC Reading",
+  "version": "1.0.0",
+  "description": "Leer e interpretar datos del DNIe mediante protocolo PACE",
+  "category": "biometric",
+  "inputs": {
+    "can": {
+      "type": "string",
+      "required": true,
+      "pattern": "^[0-9]{6}$",
+      "description": "Card Access Number (6 dígitos)"
+    },
+    "mrz": {
+      "type": "string",
+      "description": "Machine Readable Zone (alternativa a CAN)"
+    },
+    "readPhotoData": {
+      "type": "boolean",
+      "default": true,
+      "description": "Extraer foto facial"
+    },
+    "validateSod": {
+      "type": "boolean",
+      "default": true,
+      "description": "Validar Security Object Document"
+    },
+    "timeout": {
+      "type": "number",
+      "default": 30000,
+      "description": "Timeout en ms"
+    }
+  },
+  "outputs": {
+    "success": "boolean",
+    "nfc": "object",
+    "data": "object",
+    "biometrics": "object",
+    "security": "object",
+    "steps": "object[]"
+  },
+  "timeout": 40000,
+  "retryable": true,
+  "maxRetries": 2
+}

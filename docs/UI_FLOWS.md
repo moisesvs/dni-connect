@@ -1,0 +1,273 @@
+# DNI-Connect — Flujos de Pantallas UI/UX
+
+## 1. Pantalla Principal (Común a todas las plataformas)
+
+```
+┌─────────────────────────────────┐
+│         DNI-Connect             │
+│                                 │
+│   ┌─────────────────────────┐   │
+│   │      🪪  DNI-Connect     │   │
+│   │                         │   │
+│   │   Verificación segura   │   │
+│   │   de identidad digital  │   │
+│   └─────────────────────────┘   │
+│                                 │
+│   ┌─────────────────────────┐   │
+│   │  📱 Escanear QR MiDNI   │   │
+│   └─────────────────────────┘   │
+│                                 │
+│   ┌─────────────────────────┐   │
+│   │  📶 Leer DNI por NFC    │   │  ← Solo en móvil
+│   └─────────────────────────┘   │
+│                                 │
+│   ┌─────────────────────────┐   │
+│   │  📋 Historial           │   │
+│   └─────────────────────────┘   │
+│                                 │
+└─────────────────────────────────┘
+```
+
+---
+
+## 2. Flujo QR MiDNI
+
+### 2.1 Pantalla de Escaneo QR
+
+```
+┌─────────────────────────────────┐
+│  ← Volver    Escanear QR MiDNI │
+│                                 │
+│   ┌─────────────────────────┐   │
+│   │                         │   │
+│   │    ┌───────────────┐    │   │
+│   │    │               │    │   │
+│   │    │   Visor de    │    │   │
+│   │    │   cámara      │    │   │
+│   │    │               │    │   │
+│   │    │   ┌───────┐   │    │   │
+│   │    │   │  QR   │   │    │   │
+│   │    │   │ zone  │   │    │   │
+│   │    │   └───────┘   │    │   │
+│   │    │               │    │   │
+│   │    └───────────────┘    │   │
+│   │                         │   │
+│   └─────────────────────────┘   │
+│                                 │
+│   Apunta la cámara al código    │
+│   QR generado en MiDNI          │
+│                                 │
+│   💡 El QR caduca a los 5 min   │
+│                                 │
+└─────────────────────────────────┘
+```
+
+### 2.2 Pantalla de Verificación en Progreso
+
+```
+┌─────────────────────────────────┐
+│         Verificando...          │
+│                                 │
+│         ◌ ◌ ◌ ◌ ◌ ◌            │
+│                                 │
+│   ✅ QR decodificado            │
+│   ✅ Estructura TLV validada    │
+│   ⏳ Descargando certificado... │
+│   ○  Verificando OCSP           │
+│   ○  Verificando firma ECDSA    │
+│   ○  Comprobando caducidad      │
+│                                 │
+│   Conectando con PKI de la      │
+│   Policía Nacional...           │
+│                                 │
+└─────────────────────────────────┘
+```
+
+### 2.3 Pantalla de Resultado Exitoso
+
+```
+┌─────────────────────────────────┐
+│       ✅ Identidad Verificada    │
+│                                 │
+│   ┌─────────────────────────┐   │
+│   │ Nombre: GARCÍA LÓPEZ,   │   │
+│   │         JUAN             │   │
+│   │ DNI: 12345678Z           │   │
+│   │ Fecha Nac: 15/03/1990   │   │
+│   │ Nacionalidad: ESP        │   │
+│   │ Validez: Hasta 15/03/30 │   │
+│   │                         │   │
+│   │ 🔒 Firma válida          │   │
+│   │ 🕐 QR generado hace 2m   │   │
+│   │ 📜 Cert. OCSP: OK        │   │
+│   └─────────────────────────┘   │
+│                                 │
+│   ┌─────────────────────────┐   │
+│   │  ☁️  Sincronizar datos   │   │
+│   └─────────────────────────┘   │
+│                                 │
+│   ┌─────────────────────────┐   │
+│   │  🏠 Volver al inicio     │   │
+│   └─────────────────────────┘   │
+│                                 │
+└─────────────────────────────────┘
+```
+
+### 2.4 Pantalla de Error
+
+```
+┌─────────────────────────────────┐
+│       ❌ Verificación Fallida    │
+│                                 │
+│   ┌─────────────────────────┐   │
+│   │                         │   │
+│   │   ⚠️  El código QR ha    │   │
+│   │   caducado (> 5 min)    │   │
+│   │                         │   │
+│   │   — o —                 │   │
+│   │                         │   │
+│   │   ⚠️  Firma digital      │   │
+│   │   no válida              │   │
+│   │                         │   │
+│   │   — o —                 │   │
+│   │                         │   │
+│   │   ⚠️  Certificado        │   │
+│   │   revocado               │   │
+│   │                         │   │
+│   └─────────────────────────┘   │
+│                                 │
+│   ┌─────────────────────────┐   │
+│   │  🔄 Reintentar           │   │
+│   └─────────────────────────┘   │
+│                                 │
+└─────────────────────────────────┘
+```
+
+---
+
+## 3. Flujo NFC (Solo Móvil)
+
+### 3.1 Entrada de CAN/MRZ
+
+```
+┌─────────────────────────────────┐
+│  ← Volver     Leer DNI por NFC │
+│                                 │
+│   Introduce el código de        │
+│   acceso de tu DNI:             │
+│                                 │
+│   ┌─────────────────────────┐   │
+│   │  (●) Número CAN          │   │
+│   │  ( ) Código MRZ          │   │
+│   └─────────────────────────┘   │
+│                                 │
+│   CAN (6 dígitos, frontal):    │
+│   ┌─────────────────────────┐   │
+│   │  ┌──┐┌──┐┌──┐┌──┐┌──┐┌──┐│  │
+│   │  │  ││  ││  ││  ││  ││  ││  │
+│   │  └──┘└──┘└──┘└──┘└──┘└──┘│  │
+│   └─────────────────────────┘   │
+│                                 │
+│   📷 También puedes escanear   │
+│      el CAN con la cámara       │
+│                                 │
+│   ┌─────────────────────────┐   │
+│   │     Continuar  →         │   │
+│   └─────────────────────────┘   │
+│                                 │
+└─────────────────────────────────┘
+```
+
+### 3.2 Lectura NFC en Progreso
+
+```
+┌─────────────────────────────────┐
+│         Leyendo DNI...          │
+│                                 │
+│   ┌─────────────────────────┐   │
+│   │                         │   │
+│   │     📱  ← → 🪪           │   │
+│   │                         │   │
+│   │   Mantén el DNI pegado  │   │
+│   │   a la parte trasera    │   │
+│   │   del teléfono          │   │
+│   │                         │   │
+│   └─────────────────────────┘   │
+│                                 │
+│   ✅ Canal PACE establecido     │
+│   ✅ Chip autenticado (EAC)     │
+│   ⏳ Leyendo datos (DG1)...     │
+│   ○  Leyendo foto (DG2)         │
+│   ○  Leyendo domicilio (DG11)   │
+│   ○  Verificando hashes (SOD)   │
+│                                 │
+│   ████████░░░░░░░ 55%           │
+│                                 │
+│   ⚠️  No retires el DNI         │
+│                                 │
+└─────────────────────────────────┘
+```
+
+### 3.3 Resultado NFC Exitoso
+
+```
+┌─────────────────────────────────┐
+│     ✅ DNI Leído Correctamente  │
+│                                 │
+│   ┌──────┐  GARCÍA LÓPEZ,      │
+│   │      │  JUAN                │
+│   │ FOTO │                      │
+│   │      │  DNI: 12345678Z      │
+│   └──────┘  Nac: 15/03/1990    │
+│             Exp: 15/03/2030     │
+│                                 │
+│   ┌─────────────────────────┐   │
+│   │ Domicilio:              │   │
+│   │ C/ Principal 123, 2ºA   │   │
+│   │ 28001 Madrid            │   │
+│   └─────────────────────────┘   │
+│                                 │
+│   🔒 Integridad SOD: OK        │
+│   🔗 Chip autenticado           │
+│                                 │
+│   ┌─────────────────────────┐   │
+│   │  ☁️  Sincronizar datos   │   │
+│   └─────────────────────────┘   │
+│                                 │
+└─────────────────────────────────┘
+```
+
+---
+
+## 4. Navegación General
+
+```
+                    ┌─────────┐
+                    │  Login  │
+                    └────┬────┘
+                         │
+                    ┌────▼────┐
+            ┌───────│  Home   │───────┐
+            │       └────┬────┘       │
+            │            │            │
+      ┌─────▼─────┐ ┌───▼────┐ ┌────▼─────┐
+      │  QR Scan  │ │  NFC   │ │ Historial│
+      └─────┬─────┘ └───┬────┘ └──────────┘
+            │            │
+      ┌─────▼─────┐ ┌───▼────┐
+      │ Verificar │ │  CAN/  │
+      │           │ │  MRZ   │
+      └─────┬─────┘ └───┬────┘
+            │            │
+      ┌─────▼─────┐ ┌───▼────┐
+      │ Resultado │ │ Leer   │
+      │           │ │ NFC    │
+      └─────┬─────┘ └───┬────┘
+            │            │
+            └──────┬─────┘
+                   │
+            ┌──────▼──────┐
+            │ Sincronizar │
+            │ a Google    │
+            └─────────────┘
+```

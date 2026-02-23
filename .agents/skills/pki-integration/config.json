@@ -1,0 +1,49 @@
+{
+  "name": "pki-integration",
+  "version": "1.0.0",
+  "category": "crypto",
+  "description": "Integración con PKI de la Policía Nacional",
+  "timeout": 15000,
+  "inputs": {
+    "certRef": {
+      "type": "string",
+      "required": true,
+      "description": "Referencia de certificado"
+    },
+    "validateOcsp": {
+      "type": "boolean",
+      "required": false,
+      "default": true,
+      "description": "Verificar OCSP"
+    },
+    "cacheTTL": {
+      "type": "number",
+      "required": false,
+      "default": 3600,
+      "description": "TTL de caché en segundos"
+    }
+  },
+  "outputs": {
+    "success": {
+      "type": "boolean",
+      "description": "¿Operación exitosa?"
+    },
+    "certificate": {
+      "type": "object",
+      "description": "Datos del certificado"
+    },
+    "ocspStatus": {
+      "type": "string",
+      "enum": ["good", "revoked", "unknown"],
+      "description": "Estado OCSP"
+    },
+    "cached": {
+      "type": "boolean",
+      "description": "¿Resultado en caché?"
+    },
+    "duration": {
+      "type": "number",
+      "description": "Duración en ms"
+    }
+  }
+}

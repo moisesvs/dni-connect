@@ -1,0 +1,56 @@
+{
+  "name": "storage-upload",
+  "version": "1.0.0",
+  "category": "data",
+  "description": "Subir biometría a Google Cloud Storage",
+  "timeout": 30000,
+  "inputs": {
+    "userId": {
+      "type": "string",
+      "required": true,
+      "description": "ID del usuario"
+    },
+    "photoPath": {
+      "type": "string",
+      "required": true,
+      "description": "Ruta local de la foto"
+    },
+    "metadata": {
+      "type": "object",
+      "required": false,
+      "description": "Metadatos adicionales"
+    },
+    "public": {
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "description": "¿URL pública?"
+    }
+  },
+  "outputs": {
+    "success": {
+      "type": "boolean",
+      "description": "¿Carga exitosa?"
+    },
+    "storagePath": {
+      "type": "string",
+      "description": "Ruta en GCS"
+    },
+    "publicUrl": {
+      "type": "string",
+      "description": "URL pública (si aplica)"
+    },
+    "signedUrl": {
+      "type": "string",
+      "description": "URL firmada temporal"
+    },
+    "size": {
+      "type": "number",
+      "description": "Tamaño en bytes"
+    },
+    "duration": {
+      "type": "number",
+      "description": "Duración en ms"
+    }
+  }
+}

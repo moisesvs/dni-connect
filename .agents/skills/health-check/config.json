@@ -1,0 +1,46 @@
+{
+  "name": "health-check",
+  "version": "1.0.0",
+  "category": "monitoring",
+  "description": "Verificar salud de servicios desplegados",
+  "timeout": 60000,
+  "inputs": {
+    "service": {
+      "type": "string",
+      "required": false,
+      "default": "all",
+      "enum": ["backend", "pki", "ocsp", "all"],
+      "description": "Servicio a verificar"
+    },
+    "timeout": {
+      "type": "number",
+      "required": false,
+      "default": 10,
+      "description": "Timeout en segundos"
+    },
+    "retries": {
+      "type": "number",
+      "required": false,
+      "default": 3,
+      "description": "Reintentos"
+    }
+  },
+  "outputs": {
+    "success": {
+      "type": "boolean",
+      "description": "¿Todos los servicios saludables?"
+    },
+    "services": {
+      "type": "object",
+      "description": "Estado de cada servicio"
+    },
+    "duration": {
+      "type": "number",
+      "description": "Duración en ms"
+    },
+    "timestamp": {
+      "type": "string",
+      "description": "Marca de tiempo"
+    }
+  }
+}

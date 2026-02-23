@@ -1,0 +1,10 @@
+{
+  "input": {
+    "environment": "production",
+    "version": "1.0.0"
+  },
+  "expectedOutput": {
+    "success": true,
+    "version": "1.0.0"
+  }
+}

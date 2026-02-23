@@ -1,0 +1,11 @@
+{
+  "input": {
+    "platform": "web",
+    "coverage": true
+  },
+  "expectedOutput": {
+    "success": true,
+    "testsRun": 28,
+    "testsFailed": 0
+  }
+}

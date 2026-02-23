@@ -1,0 +1,48 @@
+{
+  "id": "database-sync",
+  "name": "Database Sync",
+  "version": "1.0.0",
+  "description": "Sincronizar datos verificados con Google Cloud Firestore y GCS",
+  "category": "data",
+  "inputs": {
+    "userId": {
+      "type": "string",
+      "required": true,
+      "description": "Email o UUID del usuario"
+    },
+    "dniData": {
+      "type": "object",
+      "required": true,
+      "description": "Datos del DNI extraídos"
+    },
+    "photoBase64": {
+      "type": "string",
+      "description": "Foto en base64"
+    },
+    "verificationResult": {
+      "type": "object",
+      "required": true,
+      "description": "Resultado de verificación"
+    },
+    "method": {
+      "type": "string",
+      "enum": ["qr", "nfc"],
+      "required": true,
+      "description": "Método de verificación"
+    },
+    "retryOnFailure": {
+      "type": "boolean",
+      "default": true,
+      "description": "Reintentar en caso de fallo"
+    }
+  },
+  "outputs": {
+    "success": "boolean",
+    "stored": "object",
+    "history": "object",
+    "duration": "number"
+  },
+  "timeout": 15000,
+  "retryable": true,
+  "maxRetries": 3
+}

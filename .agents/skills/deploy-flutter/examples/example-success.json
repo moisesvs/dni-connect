@@ -1,0 +1,11 @@
+{
+  "input": {
+    "platform": "android",
+    "track": "internal"
+  },
+  "expectedOutput": {
+    "success": true,
+    "platform": "android",
+    "track": "internal"
+  }
+}

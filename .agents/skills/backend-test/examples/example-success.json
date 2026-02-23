@@ -1,0 +1,13 @@
+{
+  "input": {
+    "watch": false,
+    "coverage": true,
+    "verbose": false,
+    "env": "testing"
+  },
+  "expectedOutput": {
+    "success": true,
+    "testsRun": 42,
+    "testsFailed": 0
+  }
+}

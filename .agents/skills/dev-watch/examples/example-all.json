@@ -1,0 +1,21 @@
+{
+  "description": "Watch Flutter y Backend con hot reload exitoso",
+  "input": {
+    "target": "all",
+    "platform": "web",
+    "verbose": true
+  },
+  "expectedOutput": {
+    "success": true,
+    "processes": {
+      "flutter": {
+        "status": "running",
+        "platform": "web"
+      },
+      "backend": {
+        "status": "running",
+        "port": 3000
+      }
+    }
+  }
+}

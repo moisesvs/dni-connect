@@ -1,0 +1,50 @@
+{
+  "name": "coverage",
+  "version": "1.0.0",
+  "category": "quality",
+  "description": "Generar reportes de cobertura",
+  "timeout": 45000,
+  "inputs": {
+    "format": {
+      "type": "string",
+      "required": false,
+      "default": "lcov",
+      "enum": ["lcov", "json", "html"],
+      "description": "Formato del reporte"
+    },
+    "minThreshold": {
+      "type": "number",
+      "required": false,
+      "default": 80,
+      "description": "Umbral mínimo en %"
+    },
+    "reportPath": {
+      "type": "string",
+      "required": false,
+      "default": "./coverage",
+      "description": "Ruta del reporte"
+    }
+  },
+  "outputs": {
+    "success": {
+      "type": "boolean",
+      "description": "¿Reporte generado exitosamente?"
+    },
+    "coverage": {
+      "type": "object",
+      "description": "Porcentajes de cobertura"
+    },
+    "meetsThreshold": {
+      "type": "boolean",
+      "description": "¿Cumple umbral mínimo?"
+    },
+    "reportPath": {
+      "type": "string",
+      "description": "Ruta del reporte generado"
+    },
+    "duration": {
+      "type": "number",
+      "description": "Duración en ms"
+    }
+  }
+}
