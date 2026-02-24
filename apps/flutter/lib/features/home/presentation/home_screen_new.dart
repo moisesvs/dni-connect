@@ -19,7 +19,6 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
     
     return Scaffold(
       appBar: AppBar(
-        title: Text('DNI-Connect'),
         elevation: 0,
         centerTitle: true,
         actions: [

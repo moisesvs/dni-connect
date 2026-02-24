@@ -1,0 +1,78 @@
+{
+  "name": "notebooklm-integration",
+  "version": "1.0.0",
+  "description": "Integración con Google NotebookLM para análisis de documentos",
+  "type": "skill",
+  "author": "DNI-Connect Team",
+  
+  "inputs": {
+    "action": {
+      "type": "string",
+      "enum": ["notebooks", "documents", "queries", "sources", "export"],
+      "required": true,
+      "description": "Categoría de acción"
+    },
+    "operation": {
+      "type": "string",
+      "enum": [
+        "list", "get", "create", "update", "delete",
+        "upload", "download", "analyze",
+        "ask", "generatePodcast", "generateStudyGuide",
+        "markdown", "pdf"
+      ],
+      "required": true,
+      "description": "Operación específica"
+    },
+    "notebookId": {
+      "type": "string",
+      "required": false,
+      "description": "ID del notebook"
+    },
+    "query": {
+      "type": "string",
+      "required": false,
+      "description": "Pregunta o consulta"
+    },
+    "documentPath": {
+      "type": "string",
+      "required": false,
+      "description": "Ruta del documento"
+    },
+    "format": {
+      "type": "string",
+      "enum": ["markdown", "json", "pdf", "html"],
+      "default": "markdown",
+      "description": "Formato de exportación"
+    }
+  },
+
+  "outputs": {
+    "success": { "type": "boolean" },
+    "data": { "type": "object" },
+    "error": { "type": "string" },
+    "duration_ms": { "type": "number" }
+  },
+
+  "timeout": 60000,
+  "retries": 3,
+
+  "tags": ["notebooklm", "ai", "analysis", "documents"],
+
+  "examples": {
+    "ask": {
+      "input": {
+        "action": "queries",
+        "operation": "ask",
+        "notebookId": "8f79890a-531b-4b8f-8f09-d98fe6b60bbc",
+        "query": "¿Cuál es el tema principal?"
+      },
+      "expectedOutput": {
+        "success": true,
+        "data": {
+          "answer": "El documento trata sobre...",
+          "sources": ["source1", "source2"]
+        }
+      }
+    }
+  }
+}

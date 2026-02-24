@@ -12,6 +12,13 @@ Registro de cambios y evolución de la aplicación DNI-Connect. Cada cambio sign
 
 ## [Unreleased]
 
+### 🔄 Commit: 7358903
+- **Mensaje**: refactor: Update theme references in HomeScreenNew and add CI validation documentation
+- **Autor**: e032284
+- **Timestamp**: 2026-02-23 12:40:37
+- 📱 **Flutter**: Cambios en aplicación móvil/webn
+
+
 ### 🔄 Commit: 20db6c3
 - **Mensaje**: Instalar MCP Supabase con cliente, middleware y skill de automatización
 - **Autor**: e032284

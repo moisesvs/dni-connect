@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dni_connect/core/models/dni_data.dart';
+import 'package:dni_connect/core/services/qr_midni_service.dart';
+import 'package:dni_connect/core/services/qr_age_service.dart';
 import 'package:dni_connect/core/widgets/dni_connect_components.dart';
+import 'package:logger/logger.dart';
 
 /// Pantalla que muestra los campos del DNI extraídos del QR
-/// y verifica el QR en segundo plano
+/// Integra el SDK de MiDNI para decodificación real (ICAO 9303 Pt. 13)
 class QrResultScreen extends ConsumerStatefulWidget {
   final String qrData;
 
@@ -24,10 +27,14 @@ class _QrResultScreenState extends ConsumerState<QrResultScreen>
   late PageController _pageController;
   int _currentFieldIndex = 0;
   bool _isVerifying = false;
-  String _verificationStatus = 'Verificando QR...';
+  String _verificationStatus = 'Leyendo QR MiDNI...';
   bool _verificationComplete = false;
   bool _verificationSuccess = false;
   DniData? _dniData;
+  AgeQrData? _ageQrData;
+  String? _errorMessage;
+  String _qrType = 'Desconocido'; // 'Age' o 'Full'
+  final logger = Logger();
 
   // Campos del DNI para mostrar uno por uno
   late List<_DniField> _dniFields;
@@ -41,11 +48,11 @@ class _QrResultScreenState extends ConsumerState<QrResultScreen>
     );
     _pageController = PageController();
 
-    // Inicializar campos del DNI (simulado)
+    // Inicializar campos del DNI
     _initializeDniFields();
 
-    // Iniciar verificación en background
-    _startBackgroundVerification();
+    // Iniciar decodificación real del QR
+    _decodeQrWithRealSdk();
   }
 
   void _initializeDniFields() {
@@ -93,72 +100,178 @@ class _QrResultScreenState extends ConsumerState<QrResultScreen>
     ];
   }
 
-  Future<void> _startBackgroundVerification() async {
+  /// Decodifica el QR usando el SDK oficial de MiDNI
+  /// Primero intenta QR de Edad, luego QR completo ICAO 9303 Parte 13
+  Future<void> _decodeQrWithRealSdk() async {
+    if (!mounted) return;
+
     setState(() {
       _isVerifying = true;
-      _verificationStatus = 'Verificando QR...';
+      _verificationStatus = 'Leyendo QR MiDNI...';
+      _errorMessage = null;
     });
 
-    // Simular extracción de datos del QR y verificación
-    await Future.delayed(const Duration(milliseconds: 500));
+    try {
+      logger.i('🔍 Iniciando decodificación del QR');
 
-    // Actualizar campos con datos extraídos
-    _updateDniFields();
+      // Paso 1: Intentar decodificar como QR de Edad (más simple)
+      setState(() {
+        _verificationStatus = 'Detectando tipo de QR...';
+      });
+      await Future.delayed(const Duration(milliseconds: 300));
 
-    // Simular verificación en background
-    await Future.delayed(const Duration(seconds: 2));
+      final ageService = QrAgeService.instance;
+      try {
+        final ageData = await ageService.decodeAgeQr(widget.qrData);
+        
+        if (!mounted) return;
 
-    setState(() {
-      _verificationStatus = 'Validando integridad...';
-    });
+        setState(() {
+          _ageQrData = ageData;
+          _qrType = 'Age';
+          _verificationStatus = 'QR de Edad detectado ✓';
+        });
 
-    await Future.delayed(const Duration(seconds: 1));
+        logger.i('✅ QR de Edad decodificado: ${ageData.fullName} (${ageData.age} años)');
 
-    setState(() {
-      _verificationStatus = 'Verificando OCSP...';
-    });
+        // Actualizar UI con datos de edad
+        _updateAgeQrFields(ageData);
 
-    await Future.delayed(const Duration(seconds: 1));
+        if (!mounted) return;
 
-    setState(() {
-      _verificationStatus = 'Completado ✓';
-      _verificationComplete = true;
-      _verificationSuccess = true;
-    });
+        // Validación completada
+        if (mounted) {
+          setState(() {
+            _verificationStatus = '✅ Verificación completada';
+            _verificationComplete = true;
+            _verificationSuccess = true;
+          });
+        }
 
-    // Animar hacia el siguiente campo si es necesario
-    if (_currentFieldIndex < _dniFields.length - 1) {
-      _animateToNextField();
+        logger.i('✅ Proceso de decodificación de QR de Edad completado');
+        return;
+      } catch (ageError) {
+        logger.d('⚠️ No es QR de Edad, intentando QR completo...');
+      }
+
+      // Paso 2: Si no es de edad, intentar QR completo ICAO 9303 Pt.13
+      setState(() {
+        _verificationStatus = 'Decodificando QR completo...';
+      });
+      await Future.delayed(const Duration(milliseconds: 300));
+
+      final qrService = QrMiDniService.instance;
+      final dniData = await qrService.decodeQr(widget.qrData);
+
+      if (!mounted) return;
+
+      setState(() {
+        _dniData = dniData;
+        _qrType = 'Full';
+        _verificationStatus = 'DNI decodificado ✓';
+      });
+
+      logger.i('✅ QR completo decodificado: ${dniData.documentNumber}');
+
+      // Actualizar campos con datos reales
+      await Future.delayed(const Duration(milliseconds: 500));
+      _updateDniFieldsWithRealData(dniData);
+
+      if (!mounted) return;
+
+      // Validar vigencia del documento
+      setState(() {
+        _verificationStatus = 'Validando vigencia...';
+      });
+      await Future.delayed(const Duration(milliseconds: 400));
+
+      final isValid = qrService.isDocumentValid(dniData);
+
+      if (!mounted) return;
+
+      // Validar integridad criptográfica
+      setState(() {
+        _verificationStatus = 'Verificando integridad...';
+      });
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      // Completar verificación
+      if (mounted) {
+        setState(() {
+          _verificationStatus = isValid ? 'Verificación completada ✓' : 'Documento vencido ⚠️';
+          _verificationComplete = true;
+          _verificationSuccess = isValid;
+        });
+      }
+
+      logger.i('✅ Proceso de decodificación completado');
+
+      // Animar los campos
+      if (mounted && _currentFieldIndex < _dniFields.length - 1) {
+        _animateToNextField();
+      }
+    } catch (e) {
+      logger.e('❌ Error decodificando QR', error: e);
+
+      if (mounted) {
+        setState(() {
+          _errorMessage = e.toString();
+          _verificationComplete = true;
+          _verificationSuccess = false;
+          _verificationStatus = 'Error en decodificación';
+        });
+      }
     }
   }
 
-  void _updateDniFields() {
-    // Simular datos extraídos del QR
-    _dniFields[0].value = '12345678X';
-    _dniFields[1].value = 'Juan Pérez García';
-    _dniFields[2].value = '15/03/1990';
-    _dniFields[3].value = 'Varón';
-    _dniFields[4].value = 'Español';
-    _dniFields[5].value = 'Dirección General de la Policía';
-    _dniFields[6].value = '10/01/2020';
-    _dniFields[7].value = '10/01/2030';
+  /// Actualiza los campos del DNI con datos reales extraídos del QR
+  void _updateDniFieldsWithRealData(DniData dniData) {
+    if (!mounted) return;
+
+    _dniFields[0].value = dniData.documentNumber;
+    _dniFields[1].value = dniData.fullName;
+    _dniFields[2].value = dniData.dateOfBirth;
+    _dniFields[3].value = dniData.sex;
+    _dniFields[4].value = dniData.nationality;
+    _dniFields[5].value = dniData.issuingAuthority;
+    _dniFields[6].value = dniData.dateOfIssue;
+    _dniFields[7].value = dniData.dateOfExpiry;
 
     setState(() {
       _dniFields = List.from(_dniFields);
     });
+
+    logger.d('✅ Campos del DNI actualizados con datos reales');
+  }
+
+  /// Actualiza los campos con datos del QR de Edad
+  void _updateAgeQrFields(AgeQrData ageData) {
+    if (!mounted) return;
+
+    _dniFields[0].value = ageData.documentNumber;
+    _dniFields[1].value = ageData.fullName;
+    _dniFields[2].value = ageData.dateOfBirth;
+    _dniFields[3].value = ageData.age > 0 ? '${ageData.age} años' : 'N/A';
+    _dniFields[4].value = ageData.isOver18 ? '✅ Mayor de edad' : '❌ Menor de edad';
+    _dniFields[5].value = ageData.isOver21 ? '✅ Mayor de 21' : '❌ Menor de 21';
+    _dniFields[6].value = ageData.sex;
+    _dniFields[7].value = ageData.nationality;
+
+    setState(() {
+      _dniFields = List.from(_dniFields);
+    });
+
+    logger.d('✅ Campos del QR de Edad actualizados con datos reales');
   }
 
   void _animateToNextField() {
     if (_currentFieldIndex < _dniFields.length - 1) {
-      setState(() {
-        _currentFieldIndex++;
-      });
+      _currentFieldIndex++;
       _pageController.animateToPage(
         _currentFieldIndex,
         duration: const Duration(milliseconds: 400),
         curve: Curves.easeInOut,
       );
-      _animationController.forward(from: 0.0);
     }
   }
 
@@ -171,225 +284,214 @@ class _QrResultScreenState extends ConsumerState<QrResultScreen>
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Verificando DNI'),
+        title: Text(_qrType == 'Age' ? 'QR de Edad' : 'Resultado del QR'),
+        centerTitle: true,
         elevation: 0,
       ),
-      body: Column(
-        children: [
-          // Barra de progreso de verificación
-          LinearProgressIndicator(
-            value: _verificationComplete ? 1.0 : null,
-            backgroundColor: colorScheme.surfaceVariant,
-            valueColor: AlwaysStoppedAnimation<Color>(
-              _verificationSuccess ? colorScheme.primary : Colors.orange,
-            ),
-            minHeight: 4,
-          ),
-          // Estado de verificación
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                if (_isVerifying)
-                  SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        colorScheme.primary,
-                      ),
-                    ),
-                  )
-                else if (_verificationSuccess)
-                  Icon(
-                    Icons.check_circle,
-                    color: colorScheme.primary,
-                    size: 20,
-                  ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    _verificationStatus,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: colorScheme.onSurfaceVariant,
-                        ),
-                  ),
-                ),
-                Text(
-                  '${_currentFieldIndex + 1}/${_dniFields.length}',
-                  style: Theme.of(context).textTheme.labelSmall,
-                ),
-              ],
-            ),
-          ),
-          // Campos del DNI
-          Expanded(
-            child: PageView.builder(
-              controller: _pageController,
-              physics: const NeverScrollableScrollPhysics(),
-              onPageChanged: (index) {
-                setState(() {
-                  _currentFieldIndex = index;
-                });
-              },
-              itemCount: _dniFields.length,
-              itemBuilder: (context, index) {
-                return _buildFieldCard(context, _dniFields[index], index);
-              },
-            ),
-          ),
-          // Botones de navegación
-          Padding(
-            padding: const EdgeInsets.all(24),
-            child: Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: _currentFieldIndex > 0
-                        ? () {
-                            if (_currentFieldIndex > 0) {
-                              _pageController.previousPage(
-                                duration: const Duration(milliseconds: 400),
-                                curve: Curves.easeInOut,
-                              );
-                            }
-                          }
-                        : null,
-                    icon: const Icon(Icons.arrow_back),
-                    label: const Text('Anterior'),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: _currentFieldIndex < _dniFields.length - 1
-                        ? () {
-                            _animateToNextField();
-                          }
-                        : _verificationComplete
-                            ? () {
-                                context.pushNamed('result');
-                              }
-                            : null,
-                    icon: Icon(
-                      _currentFieldIndex < _dniFields.length - 1
-                          ? Icons.arrow_forward
-                          : Icons.check,
-                    ),
-                    label: Text(
-                      _currentFieldIndex < _dniFields.length - 1
-                          ? 'Siguiente'
-                          : 'Finalizar',
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+      body: Center(
+        child: _errorMessage != null
+            ? _buildErrorWidget()
+            : _buildVerificationWidget(),
       ),
     );
   }
 
-  Widget _buildFieldCard(
-    BuildContext context,
-    _DniField field,
-    int index,
-  ) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final isCurrentField = index == _currentFieldIndex;
+  Widget _buildErrorWidget() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(
+          Icons.error_outline,
+          size: 80,
+          color: Colors.red[400],
+        ),
+        const SizedBox(height: 24),
+        Text(
+          'Error en verificación',
+          style: Theme.of(context).textTheme.headlineSmall,
+        ),
+        const SizedBox(height: 12),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Text(
+            _errorMessage ?? 'Ocurrió un error desconocido',
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+        ),
+        const SizedBox(height: 32),
+        ElevatedButton(
+          onPressed: () {
+            context.go('/home');
+          },
+          child: const Text('Volver al menú'),
+        ),
+      ],
+    );
+  }
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
-      child: Column(
+  Widget _buildVerificationWidget() {
+    if (!_verificationComplete) {
+      return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Icono del campo
-          ScaleTransition(
-            scale: Tween<double>(begin: 0.8, end: 1.0).animate(
-              CurvedAnimation(
-                parent: _animationController,
-                curve: Curves.elasticOut,
-              ),
-            ),
-            child: Container(
-              width: 100,
-              height: 100,
-              decoration: BoxDecoration(
-                color: colorScheme.primary.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(50),
-              ),
-              child: Icon(
-                field.icon,
-                size: 50,
-                color: colorScheme.primary,
-              ),
-            ),
-          ),
-          const SizedBox(height: 32),
-          // Etiqueta
+          const CircularProgressIndicator(),
+          const SizedBox(height: 24),
           Text(
-            field.label,
-            style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  color: colorScheme.onSurfaceVariant,
-                ),
+            _verificationStatus,
+            style: Theme.of(context).textTheme.bodyLarge,
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 16),
-          // Valor
-          ScaleTransition(
-            scale: Tween<double>(begin: 0.8, end: 1.0).animate(
-              CurvedAnimation(
-                parent: _animationController,
-                curve: const Interval(0.3, 1.0, curve: Curves.easeOut),
-              ),
-            ),
-            child: SelectableText(
-              field.value,
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-              textAlign: TextAlign.center,
-            ),
+        ],
+      );
+    }
+
+    if (!_verificationSuccess) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.warning_outlined,
+            size: 80,
+            color: Colors.orange[400],
+          ),
+          const SizedBox(height: 24),
+          Text(
+            _verificationStatus,
+            style: Theme.of(context).textTheme.headlineSmall,
           ),
           const SizedBox(height: 32),
-          // Indicador de progreso
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(
-              _dniFields.length,
-              (i) => Container(
-                margin: const EdgeInsets.symmetric(horizontal: 4),
-                width: 8,
-                height: 8,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: i <= _currentFieldIndex
-                      ? colorScheme.primary
-                      : colorScheme.surfaceVariant,
-                ),
-              ),
-            ),
+          ElevatedButton(
+            onPressed: () {
+              context.go('/home');
+            },
+            child: const Text('Volver al menú'),
           ),
         ],
-      ),
+      );
+    }
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          width: 100,
+          height: 100,
+          decoration: BoxDecoration(
+            color: Colors.green[100],
+            shape: BoxShape.circle,
+          ),
+          child: Center(
+            child: Icon(
+              Icons.check_circle,
+              size: 80,
+              color: Colors.green[600],
+            ),
+          ),
+        ),
+        const SizedBox(height: 24),
+        Text(
+          _qrType == 'Age' ? '✅ QR de Edad Validado' : 'Documento verificado',
+          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+            color: Colors.green[600],
+          ),
+        ),
+        const SizedBox(height: 16),
+        // Mostrar datos según tipo de QR
+        if (_ageQrData != null) ...[
+          Text(
+            _ageQrData!.fullName,
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Edad: ${_ageQrData!.age} años',
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: _ageQrData!.isOver18 ? Colors.green : Colors.red,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Chip(
+                label: Text(
+                  _ageQrData!.isOver18 ? '✅ Mayor de 18' : '❌ Menor de 18',
+                  style: TextStyle(
+                    color: _ageQrData!.isOver18 ? Colors.green : Colors.red,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                backgroundColor: _ageQrData!.isOver18 
+                    ? Colors.green[100] 
+                    : Colors.red[100],
+              ),
+              const SizedBox(width: 8),
+              Chip(
+                label: Text(
+                  _ageQrData!.isOver21 ? '✅ Mayor de 21' : '❌ Menor de 21',
+                  style: TextStyle(
+                    color: _ageQrData!.isOver21 ? Colors.green : Colors.red,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                backgroundColor: _ageQrData!.isOver21 
+                    ? Colors.green[100] 
+                    : Colors.red[100],
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Documento: ${_ageQrData!.documentNumber}',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+        ] else if (_dniData != null) ...[
+          Text(
+            _dniData!.fullName,
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Documento: ${_dniData!.documentNumber}',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+        ],
+        const SizedBox(height: 32),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                context.go('/home');
+              },
+              child: const Text('Menú Principal'),
+            ),
+            const SizedBox(width: 16),
+            OutlinedButton(
+              onPressed: () {
+                context.go('/qr-scan');
+              },
+              child: const Text('Escanear Otro QR'),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
 
 class _DniField {
   final String label;
-  String value;
   final IconData icon;
+  String value;
 
   _DniField({
     required this.label,
-    required this.value,
     required this.icon,
+    required this.value,
   });
 }

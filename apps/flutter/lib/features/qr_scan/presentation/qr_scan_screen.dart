@@ -371,19 +371,33 @@ class _QrScanScreenState extends State<QrScanScreen>
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           // Botón de flash
-                          FloatingActionButton(
+                          ElevatedButton.icon(
                             onPressed: _toggleFlash,
-                            tooltip: 'Encender linterna',
-                            backgroundColor: colorScheme.primary,
-                            child: const Icon(Icons.flash_on),
+                            icon: const Icon(Icons.flash_on),
+                            label: const Text('Flash'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: colorScheme.primary,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 12,
+                              ),
+                            ),
                           ),
 
                           // Botón de cambiar cámara
-                          FloatingActionButton(
+                          ElevatedButton.icon(
                             onPressed: _switchCamera,
-                            tooltip: 'Cambiar cámara',
-                            backgroundColor: colorScheme.primary,
-                            child: const Icon(Icons.flip_camera_android),
+                            icon: const Icon(Icons.flip_camera_android),
+                            label: const Text('Cámara'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: colorScheme.primary,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 12,
+                              ),
+                            ),
                           ),
                         ],
                       ),

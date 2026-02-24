@@ -1,0 +1,19 @@
+{
+  "input": {
+    "action": "queries",
+    "operation": "generateStudyGuide",
+    "notebookId": "8f79890a-531b-4b8f-8f09-d98fe6b60bbc",
+    "format": "markdown"
+  },
+  "expectedOutput": {
+    "success": true,
+    "data": {
+      "studyGuideId": "guide-uuid-456",
+      "format": "markdown",
+      "content": "# Study Guide: DNI-Connect\n\n## Key Topics\n1. Verification Process\n2. Security Architecture\n...",
+      "sections": ["Overview", "Concepts", "Implementation", "Best Practices"],
+      "estimatedReadTime": 45
+    },
+    "duration_ms": 8500
+  }
+}

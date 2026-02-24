@@ -1,0 +1,67 @@
+{
+  "name": "notebooklm-mcp",
+  "version": "1.0.0",
+  "description": "Model Context Protocol for Google NotebookLM integration",
+  "type": "mcp",
+  "capabilities": {
+    "notebooks": {
+      "list": true,
+      "get": true,
+      "create": true,
+      "update": true,
+      "delete": true
+    },
+    "documents": {
+      "upload": true,
+      "download": true,
+      "list": true,
+      "analyze": true
+    },
+    "queries": {
+      "ask": true,
+      "generatePodcast": true,
+      "generateStudyGuide": true,
+      "generateOutlines": true
+    },
+    "sources": {
+      "list": true,
+      "add": true,
+      "remove": true
+    }
+  },
+  "inputs": {
+    "notebookId": {
+      "type": "string",
+      "required": false,
+      "description": "ID del notebook NotebookLM"
+    },
+    "action": {
+      "type": "string",
+      "enum": ["notebooks", "documents", "queries", "sources", "settings"],
+      "description": "Categoría de acción"
+    },
+    "operation": {
+      "type": "string",
+      "description": "Operación específica (list, get, ask, generatePodcast, etc)"
+    },
+    "query": {
+      "type": "string",
+      "description": "Pregunta o consulta para NotebookLM"
+    },
+    "documentPath": {
+      "type": "string",
+      "description": "Ruta del documento a cargar"
+    }
+  },
+  "outputs": {
+    "success": { "type": "boolean" },
+    "data": { "type": "object" },
+    "error": { "type": "string" }
+  },
+  "environment": {
+    "NOTEBOOKLM_API_KEY": "required",
+    "NOTEBOOKLM_NOTEBOOK_ID": "optional"
+  },
+  "timeout": 60000,
+  "retries": 3
+}

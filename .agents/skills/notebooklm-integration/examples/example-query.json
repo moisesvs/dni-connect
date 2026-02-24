@@ -1,0 +1,20 @@
+{
+  "input": {
+    "action": "queries",
+    "operation": "ask",
+    "notebookId": "8f79890a-531b-4b8f-8f09-d98fe6b60bbc",
+    "query": "¿Cuáles son los puntos principales de este documento?"
+  },
+  "expectedOutput": {
+    "success": true,
+    "data": {
+      "answer": "Los puntos principales incluyen: 1) Verificación de identidad, 2) Seguridad criptográfica, 3) Sincronización de datos...",
+      "sources": [
+        "source_1",
+        "source_2"
+      ],
+      "confidence": 0.95
+    },
+    "duration_ms": 3240
+  }
+}
