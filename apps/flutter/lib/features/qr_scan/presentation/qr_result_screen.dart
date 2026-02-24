@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:dni_connect/core/models/dni_data.dart';
 import 'package:dni_connect/core/services/qr_midni_service.dart';
 import 'package:dni_connect/core/services/qr_age_service.dart';
+import 'package:dni_connect/core/services/midni_expert_service.dart';
 import 'package:dni_connect/core/widgets/dni_connect_components.dart';
 import 'package:logger/logger.dart';
 
@@ -100,168 +101,99 @@ class _QrResultScreenState extends ConsumerState<QrResultScreen>
     ];
   }
 
-  /// Decodifica el QR usando el SDK oficial de MiDNI
-  /// Primero intenta QR de Edad, luego QR completo ICAO 9303 Parte 13
+  /// Decodifica el QR usando el servicio experto en MiDNI
+  /// Reconoce automáticamente todos los tipos de QR (Edad, Full ICAO 9303, Básico)
   Future<void> _decodeQrWithRealSdk() async {
     if (!mounted) return;
 
     setState(() {
       _isVerifying = true;
-      _verificationStatus = 'Leyendo QR MiDNI...';
+      _verificationStatus = '🔍 Analizando QR...';
       _errorMessage = null;
     });
 
     try {
-      logger.i('🔍 Iniciando decodificación del QR');
+      logger.i('═══════════════════════════════════════════════════');
+      logger.i('🔍 INICIANDO DECODIFICACIÓN DE QR');
+      logger.i('═══════════════════════════════════════════════════');
+      
+      // Usar el servicio experto para reconocer y parsear automáticamente
+      final expert = MiDniExpertService();
+      final miDniData = expert.recognizeAndParseDirect(widget.qrData);
 
-      // Paso 1: Intentar decodificar como QR de Edad (más simple)
-      setState(() {
-        _verificationStatus = 'Detectando tipo de QR...';
-      });
-      await Future.delayed(const Duration(milliseconds: 300));
+      if (!mounted) return;
 
-      final ageService = QrAgeService.instance;
-      try {
-        final ageData = await ageService.decodeAgeQr(widget.qrData);
-        
-        if (!mounted) return;
-
-        setState(() {
-          _ageQrData = ageData;
-          _qrType = 'Age';
-          _verificationStatus = 'QR de Edad detectado ✓';
-        });
-
-        logger.i('✅ QR de Edad decodificado: ${ageData.fullName} (${ageData.age} años)');
-
-        // Actualizar UI con datos de edad
-        _updateAgeQrFields(ageData);
-
-        if (!mounted) return;
-
-        // Validación completada
+      if (miDniData == null) {
+        logger.e('❌ No se pudo parsear el QR');
         if (mounted) {
           setState(() {
-            _verificationStatus = '✅ Verificación completada';
+            _errorMessage = 'No se pudo decodificar el QR. Formato desconocido.';
+            _verificationStatus = '❌ Error en decodificación';
             _verificationComplete = true;
-            _verificationSuccess = true;
+            _verificationSuccess = false;
+            _isVerifying = false;
           });
         }
-
-        logger.i('✅ Proceso de decodificación de QR de Edad completado');
         return;
-      } catch (ageError) {
-        logger.d('⚠️ No es QR de Edad, intentando QR completo...');
       }
 
-      // Paso 2: Si no es de edad, intentar QR completo ICAO 9303 Pt.13
-      setState(() {
-        _verificationStatus = 'Decodificando QR completo...';
-      });
-      await Future.delayed(const Duration(milliseconds: 300));
+      logger.i('✅ QR DECODIFICADO EXITOSAMENTE');
+      logger.i(miDniData.getFormattedInfo());
+      logger.i('═══════════════════════════════════════════════════');
 
-      final qrService = QrMiDniService.instance;
-      final dniData = await qrService.decodeQr(widget.qrData);
-
-      if (!mounted) return;
-
-      setState(() {
-        _dniData = dniData;
-        _qrType = 'Full';
-        _verificationStatus = 'DNI decodificado ✓';
-      });
-
-      logger.i('✅ QR completo decodificado: ${dniData.documentNumber}');
-
-      // Actualizar campos con datos reales
-      await Future.delayed(const Duration(milliseconds: 500));
-      _updateDniFieldsWithRealData(dniData);
-
-      if (!mounted) return;
-
-      // Validar vigencia del documento
-      setState(() {
-        _verificationStatus = 'Validando vigencia...';
-      });
-      await Future.delayed(const Duration(milliseconds: 400));
-
-      final isValid = qrService.isDocumentValid(dniData);
-
-      if (!mounted) return;
-
-      // Validar integridad criptográfica
-      setState(() {
-        _verificationStatus = 'Verificando integridad...';
-      });
-      await Future.delayed(const Duration(milliseconds: 500));
-
-      // Completar verificación
       if (mounted) {
         setState(() {
-          _verificationStatus = isValid ? 'Verificación completada ✓' : 'Documento vencido ⚠️';
-          _verificationComplete = true;
-          _verificationSuccess = isValid;
+          _qrType = miDniData.type.name;
+          _verificationStatus = '✅ ${miDniData.type.name.toUpperCase()} detectado';
         });
       }
 
-      logger.i('✅ Proceso de decodificación completado');
-
-      // Animar los campos
-      if (mounted && _currentFieldIndex < _dniFields.length - 1) {
-        _animateToNextField();
-      }
-    } catch (e) {
-      logger.e('❌ Error decodificando QR', error: e);
+      // Actualizar campos directamente sin delays
+      _updateFieldsFromMiDniData(miDniData);
 
       if (mounted) {
         setState(() {
-          _errorMessage = e.toString();
+          _verificationStatus = '✅ Verificación completada';
+          _verificationComplete = true;
+          _verificationSuccess = true;
+          _isVerifying = false;
+        });
+      }
+
+      logger.i('✅ Proceso completado exitosamente');
+
+    } catch (e, stackTrace) {
+      logger.e('❌ Error general en decodificación: $e\n$stackTrace');
+      
+      if (mounted) {
+        setState(() {
+          _errorMessage = 'Error: ${e.toString()}';
+          _verificationStatus = '❌ Error de decodificación';
           _verificationComplete = true;
           _verificationSuccess = false;
-          _verificationStatus = 'Error en decodificación';
+          _isVerifying = false;
         });
       }
     }
   }
 
-  /// Actualiza los campos del DNI con datos reales extraídos del QR
-  void _updateDniFieldsWithRealData(DniData dniData) {
+  /// Actualiza campos desde datos MiDNI extraídos
+  void _updateFieldsFromMiDniData(MiDniData data) {
     if (!mounted) return;
 
-    _dniFields[0].value = dniData.documentNumber;
-    _dniFields[1].value = dniData.fullName;
-    _dniFields[2].value = dniData.dateOfBirth;
-    _dniFields[3].value = dniData.sex;
-    _dniFields[4].value = dniData.nationality;
-    _dniFields[5].value = dniData.issuingAuthority;
-    _dniFields[6].value = dniData.dateOfIssue;
-    _dniFields[7].value = dniData.dateOfExpiry;
-
     setState(() {
-      _dniFields = List.from(_dniFields);
+      _dniFields[0].value = data.documentNumber;
+      _dniFields[1].value = data.fullName;
+      _dniFields[2].value = data.dateOfBirth;
+      _dniFields[3].value = data.sex == 'M' ? 'Hombre' : data.sex == 'F' ? 'Mujer' : 'No especificado';
+      _dniFields[4].value = '${data.age} años';
+      _dniFields[5].value = data.nationality;
+      _dniFields[6].value = data.documentType;
+      _dniFields[7].value = '${data.type.name.toUpperCase()}';
+      _dniFields[8].value = data.isVerified ? 'Verificado ✅' : 'Sin verificación';
     });
 
-    logger.d('✅ Campos del DNI actualizados con datos reales');
-  }
-
-  /// Actualiza los campos con datos del QR de Edad
-  void _updateAgeQrFields(AgeQrData ageData) {
-    if (!mounted) return;
-
-    _dniFields[0].value = ageData.documentNumber;
-    _dniFields[1].value = ageData.fullName;
-    _dniFields[2].value = ageData.dateOfBirth;
-    _dniFields[3].value = ageData.age > 0 ? '${ageData.age} años' : 'N/A';
-    _dniFields[4].value = ageData.isOver18 ? '✅ Mayor de edad' : '❌ Menor de edad';
-    _dniFields[5].value = ageData.isOver21 ? '✅ Mayor de 21' : '❌ Menor de 21';
-    _dniFields[6].value = ageData.sex;
-    _dniFields[7].value = ageData.nationality;
-
-    setState(() {
-      _dniFields = List.from(_dniFields);
-    });
-
-    logger.d('✅ Campos del QR de Edad actualizados con datos reales');
+    _animationController.forward();
   }
 
   void _animateToNextField() {

@@ -12,6 +12,13 @@ Registro de cambios y evolución de la aplicación DNI-Connect. Cada cambio sign
 
 ## [Unreleased]
 
+### 🔄 Commit: 1d6045e
+- **Mensaje**: Instalar MCP Google NotebookLM con cliente TypeScript e integración
+- **Autor**: e032284
+- **Timestamp**: 2026-02-24 10:36:15
+- 📱 **Flutter**: Cambios en aplicación móvil/webn- 🤖 **Skills**: Actualización en sistema de automatizaciónn- 📚 **Docs**: Actualización de documentaciónn- ⚙️ **Config**: Cambios en configuración del proyecton
+
+
 ### 🔄 Commit: 7358903
 - **Mensaje**: refactor: Update theme references in HomeScreenNew and add CI validation documentation
 - **Autor**: e032284

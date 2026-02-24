@@ -17,31 +17,43 @@ class _QrScanScreenState extends State<QrScanScreen>
   bool isProcessing = false;
   late AnimationController _pulseController;
   late AnimationController _arrowController;
+  DateTime? _lastDetectionTime;
+  static const _detectionDebounceMs = 1000; // 1 segundo entre detecciones
 
   @override
   void initState() {
     super.initState();
-    controller = MobileScannerController(
-      formats: const [BarcodeFormat.qrCode],
-      returnImage: false,
-      detectionSpeed: DetectionSpeed.normal,
-      facing: CameraFacing.back,
-      torchEnabled: false,
-    );
-
-    // Animación de pulso para el marco
-    _pulseController = AnimationController(
-      duration: const Duration(milliseconds: 1500),
-      vsync: this,
-    )..repeat();
-
-    // Animación de flechas
-    _arrowController = AnimationController(
-      duration: const Duration(milliseconds: 1200),
-      vsync: this,
-    )..repeat();
+    logger.i('🟢 [initState] Iniciando QrScanScreen');
     
-    logger.i('QrScanScreen iniciado');
+    try {
+      logger.i('🟡 [initState] Creando MobileScannerController...');
+      controller = MobileScannerController(
+        formats: const [BarcodeFormat.qrCode],
+        returnImage: false,
+        detectionSpeed: DetectionSpeed.noDuplicates, // Evitar duplicados
+        facing: CameraFacing.back,
+        torchEnabled: false,
+      );
+      logger.i('✅ [initState] MobileScannerController creado correctamente');
+
+      // Animación de pulso para el marco
+      _pulseController = AnimationController(
+        duration: const Duration(milliseconds: 1500),
+        vsync: this,
+      )..repeat();
+      logger.i('✅ [initState] Animación de pulso creada');
+
+      // Animación de flechas
+      _arrowController = AnimationController(
+        duration: const Duration(milliseconds: 1200),
+        vsync: this,
+      )..repeat();
+      logger.i('✅ [initState] Animación de flechas creada');
+      
+      logger.i('🟢 [initState] QrScanScreen iniciado correctamente');
+    } catch (e, stackTrace) {
+      logger.e('❌ [initState] Error general en initState: $e\n$stackTrace');
+    }
   }
 
   @override
@@ -53,32 +65,153 @@ class _QrScanScreenState extends State<QrScanScreen>
   }
 
   void _handleQrDetected(BarcodeCapture capture) {
-    if (isProcessing) return;
+    logger.i('🔍 [_handleQrDetected] Callback de detección llamado');
+    logger.i('   📊 isProcessing: $isProcessing');
+    logger.i('   📊 Número de códigos: ${capture.barcodes.length}');
+    
+    if (isProcessing) {
+      logger.w('⏳ [_handleQrDetected] Ya está procesando un QR, ignorando');
+      return;
+    }
+    
+    // Aplicar debounce: ignorar si la última detección fue hace menos de 1 segundo
+    final now = DateTime.now();
+    if (_lastDetectionTime != null) {
+      final timeSinceLastDetection = now.difference(_lastDetectionTime!).inMilliseconds;
+      if (timeSinceLastDetection < _detectionDebounceMs) {
+        logger.d('⏱️ [_handleQrDetected] Debounce activo (${timeSinceLastDetection}ms < ${_detectionDebounceMs}ms)');
+        return;
+      }
+    }
+    _lastDetectionTime = now;
     
     final List<Barcode> barcodes = capture.barcodes;
-    for (final barcode in barcodes) {
+    
+    if (barcodes.isEmpty) {
+      logger.d('⚠️ [_handleQrDetected] Sin códigos en este frame');
+      return;
+    }
+    
+    for (int i = 0; i < barcodes.length; i++) {
+      final barcode = barcodes[i];
       final String? qrData = barcode.rawValue;
+      
+      logger.i('   [$i] Formato: ${barcode.format}');
+      logger.i('   [$i] Tipo: ${barcode.type}');
+      logger.i('   [$i] Valor: ${qrData?.substring(0, (qrData.length > 50 ? 50 : qrData.length))}${qrData != null && qrData.length > 50 ? "..." : ""}');
+      
       if (qrData != null && qrData.isNotEmpty) {
-        isProcessing = true;
-        logger.i('QR detectado (${qrData.length} caracteres)');
-        
-        // Navegar a la pantalla de resultado con verificación
-        context.pushNamed('qr_result', extra: qrData).then((_) {
+        logger.i('✅ [_handleQrDetected] QR VÁLIDO DETECTADO');
+        // Pausar scanner inmediatamente
+        controller.stop();
+        _processQrData(qrData);
+        return;
+      }
+    }
+  }
+
+  /// Procesa los datos del QR detectado
+  void _processQrData(String qrData) {
+    if (isProcessing) return;
+    
+    isProcessing = true;
+    logger.i('🟡 [_processQrData] Procesando QR detectado');
+    
+    try {
+      context.pushNamed('qr_result', extra: qrData).then((_) {
+        logger.i('🟢 [_processQrData] Retornado de qr_result, reiniciando scanner');
+        if (mounted) {
+          setState(() {
+            _lastDetectionTime = null; // Resetear debounce
+            isProcessing = false;
+          });
+          // Reiniciar el scanner cuando regresamos
+          controller.start();
+        }
+      }).catchError((e) {
+        logger.e('❌ [_processQrData] Error en navegación: $e');
+        if (mounted) {
+          setState(() {
+            isProcessing = false;
+          });
+          // Intentar reiniciar el scanner ante error
+          try {
+            controller.start();
+          } catch (_) {}
+        }
+      });
+    } catch (e) {
+      logger.e('❌ [_processQrData] Error general: $e');
+      if (mounted) {
+        setState(() {
           isProcessing = false;
         });
-        break;
       }
     }
   }
 
   void _toggleFlash() {
-    setState(() {
-      controller.toggleTorch();
-    });
+    logger.i('🔦 [_toggleFlash] Alternando flash');
+    try {
+      setState(() {
+        controller.toggleTorch();
+      });
+      logger.i('✅ [_toggleFlash] Flash alternado correctamente');
+    } catch (e) {
+      logger.e('❌ [_toggleFlash] Error: $e');
+    }
   }
 
   void _switchCamera() {
-    controller.switchCamera();
+    logger.i('📷 [_switchCamera] Cambiando cámara');
+    try {
+      controller.switchCamera();
+      logger.i('✅ [_switchCamera] Cámara cambiada correctamente');
+    } catch (e) {
+      logger.e('❌ [_switchCamera] Error: $e');
+    }
+  }
+
+  void _showTestQrInput() {
+    logger.i('🧪 [_showTestQrInput] Abriendo diálogo de entrada manual');
+    final textController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Introducir QR para Testing'),
+        content: TextField(
+          controller: textController,
+          maxLines: 5,
+          decoration: const InputDecoration(
+            hintText: 'Pega aquí el contenido del QR...',
+            border: OutlineInputBorder(),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              logger.i('❌ [_showTestQrInput] Diálogo cancelado');
+              Navigator.pop(context);
+            },
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              final qrData = textController.text.trim();
+              if (qrData.isNotEmpty) {
+                logger.i('✅ [_showTestQrInput] QR introducido manualmente: $qrData');
+                Navigator.pop(context);
+                _processQrData(qrData);
+              } else {
+                logger.w('⚠️ [_showTestQrInput] QR vacío');
+              }
+            },
+            child: const Text('Procesar'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -98,16 +231,27 @@ class _QrScanScreenState extends State<QrScanScreen>
             controller: controller,
             onDetect: _handleQrDetected,
             errorBuilder: (context, error, child) {
+              logger.e('📹 [MobileScanner.errorBuilder] Error: ${error.errorCode} - ${error.errorDetails}');
               return Center(
                 child: Text(
-                  'Error: ${error.errorCode}',
+                  'Error cámara: ${error.errorCode}',
                   style: const TextStyle(color: Colors.red),
                 ),
               );
             },
             placeholderBuilder: (context, child) {
               return const Center(
-                child: CircularProgressIndicator(),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(),
+                    SizedBox(height: 16),
+                    Text(
+                      'Inicializando cámara...',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ],
+                ),
               );
             },
           ),
@@ -392,6 +536,21 @@ class _QrScanScreenState extends State<QrScanScreen>
                             label: const Text('Cámara'),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: colorScheme.primary,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 12,
+                              ),
+                            ),
+                          ),
+
+                          // Botón de prueba manual
+                          ElevatedButton.icon(
+                            onPressed: _showTestQrInput,
+                            icon: const Icon(Icons.edit),
+                            label: const Text('Test'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.orange,
                               foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 16,
